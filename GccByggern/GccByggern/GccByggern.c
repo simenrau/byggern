@@ -6,15 +6,22 @@
  */ 
 
 
+#include <stdio.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
 #include <stdint.h>
+
 
 int main(void)
 {
-    while(1)
-    {
-		    
-    }
+		
+	DDRA = 0x00;
+	DDRB = 0xFF;
+	
+	while(1)
+	{
+		PORTB = 100;
+	}	
+	return 0;
 } 
+
