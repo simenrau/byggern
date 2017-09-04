@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Atmel Studio Solution File, Format Version 11.00
-Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "GccByggern", "GccByggern\GccByggern.cproj", "{2DF1F119-95B8-4FB4-AF05-FB1BAD8362BC}"
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "GccByggern", "GccByggern\GccByggern.cproj", "{627E8B8B-1C68-487E-BDA8-FC4F4F5EAE2A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2DF1F119-95B8-4FB4-AF05-FB1BAD8362BC}.Debug|AVR.ActiveCfg = Debug|AVR
-		{2DF1F119-95B8-4FB4-AF05-FB1BAD8362BC}.Debug|AVR.Build.0 = Debug|AVR
-		{2DF1F119-95B8-4FB4-AF05-FB1BAD8362BC}.Release|AVR.ActiveCfg = Release|AVR
-		{2DF1F119-95B8-4FB4-AF05-FB1BAD8362BC}.Release|AVR.Build.0 = Release|AVR
+		{627E8B8B-1C68-487E-BDA8-FC4F4F5EAE2A}.Debug|AVR.ActiveCfg = Debug|AVR
+		{627E8B8B-1C68-487E-BDA8-FC4F4F5EAE2A}.Debug|AVR.Build.0 = Debug|AVR
+		{627E8B8B-1C68-487E-BDA8-FC4F4F5EAE2A}.Release|AVR.ActiveCfg = Release|AVR
+		{627E8B8B-1C68-487E-BDA8-FC4F4F5EAE2A}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

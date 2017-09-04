@@ -3,23 +3,25 @@ GccByggern.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000098  00000000  00000000  00000054  2**1
+  0 .text         000000d2  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .comment      00000030  00000000  00000000  000000ec  2**0
+  1 .comment      00000030  00000000  00000000  00000126  2**0
                   CONTENTS, READONLY
-  2 .debug_aranges 00000020  00000000  00000000  0000011c  2**0
+  2 .debug_aranges 00000020  00000000  00000000  00000156  2**0
                   CONTENTS, READONLY, DEBUGGING
-  3 .debug_info   0000008e  00000000  00000000  0000013c  2**0
+  3 .debug_info   00000152  00000000  00000000  00000176  2**0
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_abbrev 00000053  00000000  00000000  000001ca  2**0
+  4 .debug_abbrev 000000e2  00000000  00000000  000002c8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_line   000000b8  00000000  00000000  0000021d  2**0
+  5 .debug_line   0000013f  00000000  00000000  000003aa  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_frame  00000024  00000000  00000000  000002d8  2**2
+  6 .debug_frame  00000024  00000000  00000000  000004ec  2**2
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_str    00000128  00000000  00000000  000002fc  2**0
+  7 .debug_str    00000173  00000000  00000000  00000510  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_ranges 00000010  00000000  00000000  00000424  2**0
+  8 .debug_loc    00000041  00000000  00000000  00000683  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_ranges 00000010  00000000  00000000  000006c4  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -62,32 +64,80 @@ Disassembly of section .text:
   78:	de bf       	out	0x3e, r29	; 62
   7a:	cd bf       	out	0x3d, r28	; 61
   7c:	0e 94 44 00 	call	0x88	; 0x88 <main>
-  80:	0c 94 4a 00 	jmp	0x94	; 0x94 <_exit>
+  80:	0c 94 67 00 	jmp	0xce	; 0xce <_exit>
 
 00000084 <__bad_interrupt>:
   84:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
 
 00000088 <main>:
-
+#include <avr/interrupt.h>
+#include <stdint.h>
 
 int main(void)
 {
-		
-	DDRA = 0x00;
-  88:	1a ba       	out	0x1a, r1	; 26
-	DDRB = 0xFF;
-  8a:	8f ef       	ldi	r24, 0xFF	; 255
-  8c:	87 bb       	out	0x17, r24	; 23
+	DDRA |= (1 << PA0) | (1 << PA2);
+  88:	8a b3       	in	r24, 0x1a	; 26
+  8a:	85 60       	ori	r24, 0x05	; 5
+  8c:	8a bb       	out	0x1a, r24	; 26
+  8e:	85 e0       	ldi	r24, 0x05	; 5
+  90:	90 e0       	ldi	r25, 0x00	; 0
+	int i = 0;
 	
-	while(1)
-	{
-		PORTB = 100;
-  8e:	84 e6       	ldi	r24, 0x64	; 100
-  90:	88 bb       	out	0x18, r24	; 24
-  92:	fe cf       	rjmp	.-4      	; 0x90 <main+0x8>
+    while(i < 5)
+    {
+        PORTA &= ~((1<<PA0)|(1<<PA2));
+  92:	2b b3       	in	r18, 0x1b	; 27
+  94:	2a 7f       	andi	r18, 0xFA	; 250
+  96:	2b bb       	out	0x1b, r18	; 27
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
 
-00000094 <_exit>:
-  94:	f8 94       	cli
+	__builtin_avr_delay_cycles(__ticks_dc);
+  98:	2f e3       	ldi	r18, 0x3F	; 63
+  9a:	32 e4       	ldi	r19, 0x42	; 66
+  9c:	4f e0       	ldi	r20, 0x0F	; 15
+  9e:	21 50       	subi	r18, 0x01	; 1
+  a0:	30 40       	sbci	r19, 0x00	; 0
+  a2:	40 40       	sbci	r20, 0x00	; 0
+  a4:	e1 f7       	brne	.-8      	; 0x9e <main+0x16>
+  a6:	00 c0       	rjmp	.+0      	; 0xa8 <main+0x20>
+  a8:	00 00       	nop
+		_delay_ms(1000);
+		PORTA |= (1<<PA0)|(1<<PA2);
+  aa:	2b b3       	in	r18, 0x1b	; 27
+  ac:	25 60       	ori	r18, 0x05	; 5
+  ae:	2b bb       	out	0x1b, r18	; 27
+  b0:	2f e3       	ldi	r18, 0x3F	; 63
+  b2:	32 e4       	ldi	r19, 0x42	; 66
+  b4:	4f e0       	ldi	r20, 0x0F	; 15
+  b6:	21 50       	subi	r18, 0x01	; 1
+  b8:	30 40       	sbci	r19, 0x00	; 0
+  ba:	40 40       	sbci	r20, 0x00	; 0
+  bc:	e1 f7       	brne	.-8      	; 0xb6 <main+0x2e>
+  be:	00 c0       	rjmp	.+0      	; 0xc0 <main+0x38>
+  c0:	00 00       	nop
+  c2:	01 97       	sbiw	r24, 0x01	; 1
+int main(void)
+{
+	DDRA |= (1 << PA0) | (1 << PA2);
+	int i = 0;
+	
+    while(i < 5)
+  c4:	00 97       	sbiw	r24, 0x00	; 0
+  c6:	29 f7       	brne	.-54     	; 0x92 <main+0xa>
+		_delay_ms(1000);
+		PORTA |= (1<<PA0)|(1<<PA2);
+		_delay_ms(1000);
+		i = i+1;
+    }
+  c8:	80 e0       	ldi	r24, 0x00	; 0
+  ca:	90 e0       	ldi	r25, 0x00	; 0
+  cc:	08 95       	ret
 
-00000096 <__stop_program>:
-  96:	ff cf       	rjmp	.-2      	; 0x96 <__stop_program>
+000000ce <_exit>:
+  ce:	f8 94       	cli
+
+000000d0 <__stop_program>:
+  d0:	ff cf       	rjmp	.-2      	; 0xd0 <__stop_program>
