@@ -1,9 +1,12 @@
-#include <avr/io.h>
-
 #define FOSC 4915200 //Clock Speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1
 
+#include <avr/io.h>
+#include <stdio.h>
+#include "UART.h"
+
+FILE *uart;
 
 void USART_Init(unsigned int ubrr)
 {
@@ -12,7 +15,9 @@ void USART_Init(unsigned int ubrr)
 	
 	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
 	
-	UCSR0C = (1<<URSEL0)|(1<<USBS0)|(3<<UCSZ00);
+	uart = fdevopen(&USART_Transmit, &USART_Receive);
+	
+	//UCSR0C = (1<<URSEL0)|(1<<USBS0)|(3<<UCSZ00);
 }
 
 void USART_Transmit(unsigned char data)
@@ -29,6 +34,6 @@ unsigned char USART_Receive(void)
 	/* Wait for data to be received */
 	while ( !(UCSR0A & (1<<RXC0)) );
 	
-	/* Get and return received data from buffen */
+	/* Get and return received data from buffer */
 	return UDR0;
 }

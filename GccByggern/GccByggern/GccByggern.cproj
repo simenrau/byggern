@@ -122,6 +122,12 @@
     <Compile Include="GccByggern.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="SRAM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SRAM.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="UART.c">
       <SubType>compile</SubType>
     </Compile>
