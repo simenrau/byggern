@@ -1,8 +1,8 @@
-#include <stdlib.h>
-#include <stdint.h>
+#include "define.h"
 
 void SRAM_test(void) 
 { 
+	MCUCR |= (1 << SRE);
 	volatile char *ext_ram = (char *) 0x1800; // Start address for the SRAM 
 	uint16_t ext_ram_size = 0x800; 
 	uint16_t write_errors = 0; 

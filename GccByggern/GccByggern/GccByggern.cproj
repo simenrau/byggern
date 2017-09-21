@@ -119,7 +119,22 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ADC.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="define.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="GccByggern.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="RAM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="RAM.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SRAM.c">

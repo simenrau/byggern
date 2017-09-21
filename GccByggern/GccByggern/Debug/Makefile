@@ -37,7 +37,9 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../ADC.c \
 ../GccByggern.c \
+../RAM.c \
 ../SRAM.c \
 ../UART.c
 
@@ -49,22 +51,30 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+ADC.o \
 GccByggern.o \
+RAM.o \
 SRAM.o \
 UART.o
 
 OBJS_AS_ARGS +=  \
+ADC.o \
 GccByggern.o \
+RAM.o \
 SRAM.o \
 UART.o
 
 C_DEPS +=  \
+ADC.d \
 GccByggern.d \
+RAM.d \
 SRAM.d \
 UART.d
 
 C_DEPS_AS_ARGS +=  \
+ADC.d \
 GccByggern.d \
+RAM.d \
 SRAM.d \
 UART.d
 
@@ -82,6 +92,10 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 

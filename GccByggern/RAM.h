@@ -1,3 +1,3 @@
 #include "define.h"
 
-void SRAM_test(void);
+void ram_init(void);

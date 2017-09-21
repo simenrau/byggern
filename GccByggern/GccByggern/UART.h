@@ -1,8 +1,4 @@
-#define FOSC 4915200 //Clock Speed
-#define BAUD 9600
-#define MYUBRR FOSC/16/BAUD-1
-
-
+#include "define.h"
 
 void USART_Init(unsigned int ubrr);
 
