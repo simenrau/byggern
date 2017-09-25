@@ -1,7 +1,4 @@
 #include "define.h"
-#define bit_set(reg, bit) (reg |= (1 << bit))
-#define bit_clear(reg, bit) (reg &= ~(1 << bit))
-#define bit_test(reg, bit) (reg & (1 << bit))
 
 void ram_init(void)
 {

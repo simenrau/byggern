@@ -3,29 +3,42 @@
 #include "SRAM.h"
 #include "RAM.h"
 #include "ADC.h"
+#include "OLED.h"
+#include "fonts.h"
 
-#define ADC_CHANNEL_JOY_X 0b00000100
-#define ADC_CHANNEL_JOY_Y 0b00000101
-#define ADC_CHANNEL_JOY_B 0b00000110
-#define ADC_CHANNEL_TOUCH 0b00000111
-
-void test_joystick(void);
-int main(void)
+void test_buttons()
 {
-	//SRAM_test();
-	
-	//test_adc();
-	
-	test_joystick();
+	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
+	 
+	bool val_joystick;  //testing if joystick pushbutton returns its value
+	while(1)
+	{		
+		bool button_left = (PINB & (1 << PB0));
+		bool button_right = (PINB & (1 << PB1));
+		
+		bool joystick_pressed = val_joystick;
+		val_joystick = (PINB & (1 << PB2));
+		
+		if (joystick_pressed == 0)
+		{
+			joystick_pressed = 1;
+		}
+		else
+		{
+			joystick_pressed = 0;
+		}
+		
+		
+		printf("Joystick: %d\n", val_joystick);										//Pull-up resistor gjør at det fungerer (verdi 0 når joystick holdes nede)
+		//printf("Left button: %d Right button: %d\n", button_left, button_right);
+	}
+	  
 }
-
-//sei()
 
 void test_adc()
 {
-		USART_Init(MYUBRR);
 		ram_init();
-	
+		
 		printf("Testing ADC:\n");
 		
 		while (1)
@@ -37,6 +50,7 @@ void test_adc()
 			printf("%d %d %d %d\n", ch1, ch2, ch3, ch4);
 			_delay_ms(1000);
 	}
+	
 }	
 
 void test_joystick()
@@ -48,6 +62,7 @@ void test_joystick()
     uint8_t min_y = 255;
     uint8_t max_y = 0;
     uint8_t button_threshold = 128;
+	
     while (1)
     {
         unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
@@ -55,12 +70,61 @@ void test_joystick()
         unsigned int b_volt = read_adc(ADC_CHANNEL_JOY_B);
         uint8_t is_down = (b_volt < button_threshold);
 
-		printf("%i, %i, %d\n", x_volt, y_volt, b_volt);
-		_delay_us(1000);
+		//printf("%i, %i, %d\n", x_volt, y_volt, b_volt);
+		_delay_ms(500);
+		
+		//Hvis verdiene er mellom 120 og 132 byte skal det returneres NEUTRAL
+		if((x_volt >= 120 && x_volt <= 132) && (y_volt >= 120 && y_volt <= 130))
+		{
+			printf("NEUTRAL\n");
+		}
+		if (y_volt > 130)
+		{
+			printf("UP\n");
+		}
+		if (y_volt < 120)
+		{
+			printf("DOWN\n");
+		}
+		if (x_volt > 132)
+		{
+			printf("RIGHT\n");
+		}
+		if (x_volt < 120)
+		
+		{
+			printf("LEFT\n");
+		}
+		printf("\n\n\n");
     }
+
 }
 
-// Left button mid port B
-// left slider mid back port B
-// right button back left corner port D
-// right slider left corner port D
+
+int main(void)
+{
+	USART_Init(MYUBRR);
+	
+	//SRAM_test();
+	//test_adc();
+	//test_buttons();
+	
+	//test_joystick();
+
+	
+	init_program();
+	//oled_set_column();
+	//oled_set_page();
+	while(1)
+	{
+		
+	write_c(0x00);
+	write_c(0x10);
+	write_c(0xB0);
+	
+	write_d(0xF);
+	}
+}
+
+
+//sei()
