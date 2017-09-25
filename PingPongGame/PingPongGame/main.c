@@ -29,7 +29,7 @@ void test_buttons()
 		}
 		
 		
-		printf("Joystick: %d\n", val_joystick);										//Pull-up resistor gjør at det fungerer (verdi 0 når joystick holdes nede)
+		printf("Joystick: %d\n", joystick_pressed);										//Pull-up resistor gjør at det fungerer (verdi 0 når joystick holdes nede)
 		//printf("Left button: %d Right button: %d\n", button_left, button_right);
 	}
 	  
