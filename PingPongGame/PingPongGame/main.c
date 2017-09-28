@@ -16,7 +16,7 @@ void test_buttons()
 		bool button_left = (PINB & (1 << PB0));
 		bool button_right = (PINB & (1 << PB1));
 		
-		bool joystick_pressed = val_joystick;
+		bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
 		val_joystick = (PINB & (1 << PB2));
 		
 		if (joystick_pressed == 0)
@@ -29,8 +29,8 @@ void test_buttons()
 		}
 		
 		
-		printf("Joystick: %d\n", joystick_pressed);										//Pull-up resistor gjør at det fungerer (verdi 0 når joystick holdes nede)
-		//printf("Left button: %d Right button: %d\n", button_left, button_right);
+		printf("Joystick: %d\n", joystick_pressed);										//Pull-up resistor gjør at det fungerer
+		printf("Left button: %d Right button: %d\n", button_left, button_right);
 	}
 	  
 }
@@ -70,11 +70,11 @@ void test_joystick()
         unsigned int b_volt = read_adc(ADC_CHANNEL_JOY_B);
         uint8_t is_down = (b_volt < button_threshold);
 
-		//printf("%i, %i, %d\n", x_volt, y_volt, b_volt);
+		printf("%i, %i, %d\n", x_volt, y_volt, b_volt);
 		_delay_ms(500);
 		
 		//Hvis verdiene er mellom 120 og 132 byte skal det returneres NEUTRAL
-		if((x_volt >= 120 && x_volt <= 132) && (y_volt >= 120 && y_volt <= 130))
+		if((x_volt >= 124 && x_volt <= 132) && (y_volt >= 122 && y_volt <= 130))
 		{
 			printf("NEUTRAL\n");
 		}
@@ -82,7 +82,7 @@ void test_joystick()
 		{
 			printf("UP\n");
 		}
-		if (y_volt < 120)
+		if (y_volt < 122)
 		{
 			printf("DOWN\n");
 		}
@@ -90,13 +90,18 @@ void test_joystick()
 		{
 			printf("RIGHT\n");
 		}
-		if (x_volt < 120)
+		if (x_volt < 124)
 		
 		{
 			printf("LEFT\n");
 		}
+		
+		
 		printf("\n\n\n");
+		
+		
     }
+	
 
 }
 
@@ -113,8 +118,8 @@ int main(void)
 
 	
 	init_program();
-	//oled_set_column();
-	//oled_set_page();
+	oled_set_column();
+	oled_set_page();
 	while(1)
 	{
 		
@@ -124,6 +129,7 @@ int main(void)
 	
 	write_d(0xF);
 	}
+	
 }
 
 
