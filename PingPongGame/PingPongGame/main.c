@@ -105,6 +105,183 @@ void test_joystick()
 
 }
 
+void print_from_usart_to_oled()
+{
+	
+	oled_init();
+	init_program();
+	clear_oled();
+	oled_set_page(0);
+	int i,j = 0;
+	int count = 1;
+	while(1)
+	{
+		char a = USART_Receive();
+		
+		for(i = 0; i < 5; i++)
+			{
+			oled_set_column(0 + i+(j*5));
+			write_d(pgm_read_byte(&font5[a - ' '][i]));
+			}
+		if (j > 25)
+			{
+			oled_set_page(count);
+			count = count+1;
+			j=0;
+			}
+
+		j++;
+	}
+}
+
+void print_oled()
+{
+	oled_init();
+	init_program();
+	clear_oled();
+	
+	oled_set_page(0);
+	char c[27] = "Naa er det snart jul iaarrs";
+	int i,j;
+	for(j = 0;j<25;j++)
+	{
+
+		for(i = 0;i<5;i++)
+			{
+			oled_set_column(0 + i+(j*5));
+			write_d(~pgm_read_byte(&font5[c[j] - ' '][i]));
+			printf("%c%\n",c[i]);
+			}
+	}
+	
+}
+
+void oled_menu()
+{
+	ram_init();
+	oled_init();
+	clear_oled();
+	
+	const char menu[5][20] = {
+		"--HOVEDMENY--",
+		" Hjem        ",
+		" Fotball     ",
+		" Golf        ",
+		" Annet       ",
+	};
+	
+	const char fotball[3][20] = {
+		"--FOTBALL--",
+		" Arsenal   ",
+		" Man.Utd.  ",
+	};
+			
+	int count_menu = 4;
+	int select_menu = 1;
+	int sub_menu = 0;
+	while(1){
+	while(sub_menu == 1)
+	{
+		int delay = 1000; //delay in milliseconds
+		oled_set_column(0);
+		oled_set_page(0);
+		int i,j,k;
+		
+		unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+		//printf("%d %d\n", x_volt, y_volt);
+	
+		if (y_volt < 122 && select_menu < count_menu-2)
+		{
+			select_menu++;
+		}
+		if (y_volt > 130 && select_menu > 1)
+		{
+			select_menu--;
+		}
+		if(x_volt < 60)
+			{
+				sub_menu = 0;
+				break;
+			}
+		for (k = 0; k < 3; k++)
+		{
+			for (j = 0; j < 11; j++)
+			{
+				for (i = 0; i < 5; i++)
+				{
+					if(select_menu==k)
+					{
+						oled_set_column(i+(j*5));
+						write_d(~pgm_read_byte(&font5[fotball[k][j] - ' '][i]));
+					}
+					else
+					{
+						oled_set_column(i+(j*5));
+						write_d(pgm_read_byte(&font5[fotball[k][j] - ' '][i]));
+					}
+				}
+			}
+			oled_set_page(k+1);
+		}
+		_delay_ms(delay);
+	}
+	
+	while (sub_menu == 0)
+	{
+		int delay = 500; //delay in milliseconds
+		oled_set_column(0);
+		oled_set_page(0);
+		int i,j,k;
+		
+		unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+		//printf("%d %d\n", x_volt, y_volt);
+		
+		if (y_volt < 122 && select_menu < count_menu)
+		{
+			select_menu++;
+		}
+		if (y_volt > 130 && select_menu > 1)
+		{
+			select_menu--;
+		}
+		printf("%d\n",select_menu);
+		
+		if(x_volt > 130 && select_menu == 2)
+		{
+			sub_menu = 1;
+			clear_oled();
+			select_menu = 1;
+			break;
+		}
+		for (k = 0; k < 5; k++)
+		{
+			for (j = 0; j < 13; j++)
+			{
+				for (i = 0; i < 5; i++)
+				{
+					if(select_menu==k)
+					{
+						oled_set_column(i+(j*5));
+						write_d(~pgm_read_byte(&font5[menu[k][j] - ' '][i]));
+					}
+					else
+					{
+						oled_set_column(i+(j*5));
+						write_d(pgm_read_byte(&font5[menu[k][j] - ' '][i]));
+					}
+				}
+			}			
+			oled_set_page(k+1);
+		}
+		_delay_ms(delay);
+		
+		
+	}
+	}
+
+}
 
 int main(void)
 {
@@ -116,21 +293,11 @@ int main(void)
 	
 	//test_joystick();
 
+	//print_to_oled();
 	
-	init_program();
-	oled_set_column();
-	oled_set_page();
-	while(1)
-	{
-		
-	write_c(0x00);
-	write_c(0x10);
-	write_c(0xB0);
+	//print_oled();
 	
-	write_d(0xF);
-	}
-	
+	//OLED_print_arrow();
+	oled_menu();
 }
 
-
-//sei()
