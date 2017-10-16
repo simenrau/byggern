@@ -5,6 +5,9 @@
 #include "ADC.h"
 #include "OLED.h"
 #include "fonts.h"
+#include "SPI.h"
+#include "CAN.h"
+#include "MCP2515.h"
 
 void test_buttons()
 {
@@ -159,6 +162,7 @@ void print_oled()
 void oled_menu()
 {
 	ram_init();
+	init_program();
 	oled_init();
 	clear_oled();
 	
@@ -182,7 +186,7 @@ void oled_menu()
 	while(1){
 	while(sub_menu == 1)
 	{
-		int delay = 1000; //delay in milliseconds
+		int delay = 2000; //delay in milliseconds
 		oled_set_column(0);
 		oled_set_page(0);
 		int i,j,k;
@@ -191,11 +195,11 @@ void oled_menu()
 		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
 		//printf("%d %d\n", x_volt, y_volt);
 	
-		if (y_volt < 122 && select_menu < count_menu-2)
+		if (y_volt < 125 && select_menu < count_menu-2)
 		{
 			select_menu++;
 		}
-		if (y_volt > 130 && select_menu > 1)
+		if (y_volt > 135 && select_menu > 1)
 		{
 			select_menu--;
 		}
@@ -238,7 +242,7 @@ void oled_menu()
 		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
 		//printf("%d %d\n", x_volt, y_volt);
 		
-		if (y_volt < 122 && select_menu < count_menu)
+		if (y_volt < 125 && select_menu < count_menu)
 		{
 			select_menu++;
 		}
@@ -248,7 +252,7 @@ void oled_menu()
 		}
 		printf("%d\n",select_menu);
 		
-		if(x_volt > 130 && select_menu == 2)
+		if(x_volt > 135 && select_menu == 2)
 		{
 			sub_menu = 1;
 			clear_oled();
@@ -283,21 +287,40 @@ void oled_menu()
 
 }
 
+void test_SPI()
+{
+	
+	SPI_MasterInit();
+	
+	while(1)
+	{
+		SPI_MasterTransmit(0b111101111);	
+	}
+	
+	//SPI_SlaveInit();
+	//SPI_SlaveReceive();
+}
+
 int main(void)
 {
-	USART_Init(MYUBRR);
+	//USART_Init(MYUBRR);
 	
 	//SRAM_test();
 	//test_adc();
 	//test_buttons();
-	
 	//test_joystick();
-
 	//print_to_oled();
-	
 	//print_oled();
-	
 	//OLED_print_arrow();
-	oled_menu();
+	//oled_menu();
+	
+	//test_SPI();
+	//MCP_init();
+
+	
+	/*printf("\n%d",MCP_read(0x04));*/
+	
+
+	
 }
 
