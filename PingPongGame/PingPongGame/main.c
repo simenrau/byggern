@@ -5,9 +5,10 @@
 #include "ADC.h"
 #include "OLED.h"
 #include "fonts.h"
+#include "MCP2515.h"
 #include "SPI.h"
 #include "CAN.h"
-#include "MCP2515.h"
+
 
 void test_buttons()
 {
@@ -292,17 +293,18 @@ void test_SPI()
 	
 	SPI_MasterInit();
 	
-	while(1)
+	/*while(1)
 	{
 		SPI_MasterTransmit(0b111101111);	
-	}
+	}*/
 	
 	//SPI_SlaveInit();
 	//SPI_SlaveReceive();
+	MCP_init();
 }
 int main(void)
 {
-	//USART_Init(MYUBRR);
+	USART_Init(MYUBRR);
 	
 	//SRAM_test();
 	//test_adc();
@@ -316,11 +318,10 @@ int main(void)
 	
 	
 	MCP_init();
-
-	
-	printf("\n%d",MCP_read(0x04));
-	
-
+	CAN_init();
+	for(char i =0;i<255;i++){
+	printf("\n%d",MCP_read(i));
+	}
 	
 }
 

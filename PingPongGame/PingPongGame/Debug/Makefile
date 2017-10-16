@@ -39,6 +39,7 @@ SUBDIRS :=
 C_SRCS +=  \
 ../CAN.c \
 ../main.c \
+../MCP2515.c \
 ../OLED.c \
 ../RAM.c \
 ../SPI.c \
@@ -55,6 +56,7 @@ ASM_SRCS +=
 OBJS +=  \
 CAN.o \
 main.o \
+MCP2515.o \
 OLED.o \
 RAM.o \
 SPI.o \
@@ -64,6 +66,7 @@ UART.o
 OBJS_AS_ARGS +=  \
 CAN.o \
 main.o \
+MCP2515.o \
 OLED.o \
 RAM.o \
 SPI.o \
@@ -73,6 +76,7 @@ UART.o
 C_DEPS +=  \
 CAN.d \
 main.d \
+MCP2515.d \
 OLED.d \
 RAM.d \
 SPI.d \
@@ -82,6 +86,7 @@ UART.d
 C_DEPS_AS_ARGS +=  \
 CAN.d \
 main.d \
+MCP2515.d \
 OLED.d \
 RAM.d \
 SPI.d \
@@ -102,6 +107,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 
