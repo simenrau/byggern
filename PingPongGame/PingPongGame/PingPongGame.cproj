@@ -119,10 +119,13 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ADC.c">
+    <Compile Include="ADC.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ADC.h">
+    <Compile Include="CAN.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CAN.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="define.h">
@@ -144,6 +147,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="RAM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SRAM.c">

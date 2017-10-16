@@ -300,7 +300,6 @@ void test_SPI()
 	//SPI_SlaveInit();
 	//SPI_SlaveReceive();
 }
-
 int main(void)
 {
 	//USART_Init(MYUBRR);
@@ -313,12 +312,13 @@ int main(void)
 	//print_oled();
 	//OLED_print_arrow();
 	//oled_menu();
-	
 	//test_SPI();
-	//MCP_init();
+	
+	
+	MCP_init();
 
 	
-	/*printf("\n%d",MCP_read(0x04));*/
+	printf("\n%d",MCP_read(0x04));
 	
 
 	

@@ -34,7 +34,7 @@ void CAN_init(void)
 		MCP_write(MCP_RXM0EID0, 0x00);		// Clear ID masks
 
 		MCP_write(MCP_CANCTRL, 0x44);		// Enable can controller
-	}
+	
 }
 
 

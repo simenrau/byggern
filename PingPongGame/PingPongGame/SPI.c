@@ -1,11 +1,18 @@
 #define "define.h"
 #define "SPI.h"
+#define SS PB4
+#define MOSI PB5
+#define MISO PB6
+#define SCK PB7
 
-void SPI_MasterInit(void)
+
+int SPI_MasterInit(void)
 {
 	DDRB = (1 << MOSI) | (1 << SS) | (1 << SCK);
 	
 	SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);
+	
+	return 0;
 }
 
 
