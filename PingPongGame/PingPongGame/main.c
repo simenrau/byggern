@@ -291,8 +291,7 @@ void oled_menu()
 void test_SPI()
 {
 	
-	SPI_MasterInit();
-	
+
 	/*while(1)
 	{
 		SPI_MasterTransmit(0b111101111);	
@@ -302,9 +301,38 @@ void test_SPI()
 	//SPI_SlaveReceive();
 	MCP_init();
 }
+
+void test_CAN()
+{
+
+	msg can_message;
+	can_message.id = 42;
+	can_message.length = 5;
+	can_message.data[0] = 4;
+	can_message.data[1] = 4;
+	can_message.data[2] = 2;
+	can_message.data[3] = 9;
+	can_message.data[4] = 1;	
+	
+	MCP_init();
+	CAN_init();
+	
+	CAN_message_send(can_message);
+	_delay_ms(500);
+	msg message = CAN_data_receive();
+	for(int i = 0; i < message.length; i++)
+	{
+		printf("\nDATA[%d]: %d",i, message.data[i]);
+	}
+	printf("\nID: %d",message.id);
+	printf("\nlength: %d\n",message.length);
+}
+
 int main(void)
 {
 	USART_Init(MYUBRR);
+	test_CAN();
+	
 	
 	//SRAM_test();
 	//test_adc();
@@ -314,14 +342,6 @@ int main(void)
 	//print_oled();
 	//OLED_print_arrow();
 	//oled_menu();
-	//test_SPI();
-	
-	
-	MCP_init();
-	CAN_init();
-	for(char i =0;i<255;i++){
-	printf("\n%d",MCP_read(i));
-	}
-	
+	//test_SPI();	
 }
 

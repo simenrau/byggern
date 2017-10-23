@@ -2,12 +2,21 @@
 #define CAN_H
 #include "define.h"
 
-void CAN_init(void);
-/*
-void CAN_message_send(void);
-void CAN_error(void);
-void CAN_transmit_complete(void);
-void CAN_data_receive(void);
-void CAN_int_vect(void);*/
+typedef struct  
+{
+	uint16_t id;
+	uint8_t length;
+	uint8_t data[8];	
+} msg;
 
+
+
+void CAN_init(void);
+void CAN_message_send(msg can_tx);
+msg CAN_data_receive(void);
+void CAN_int_vect(void);
+
+/*
+void CAN_error(void);
+void CAN_transmit_complete(void);*/
 #endif

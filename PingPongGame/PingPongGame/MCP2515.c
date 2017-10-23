@@ -5,7 +5,6 @@
 int MCP_init(void)
 {
 	SPI_MasterInit();
-	
 	MCP_reset();
 	
 	return 0;
@@ -13,7 +12,7 @@ int MCP_init(void)
 
 int MCP_reset(void)
 {
-	PORTB |= ~(1 << SS);
+	PORTB &= ~(1 << SS);
 	
 	SPI_MasterTransmit(MCP_RESET);
 	
@@ -24,7 +23,7 @@ int MCP_reset(void)
 
 char MCP_read(char address)
 {
-	PORTB |= ~(1 << SS); 
+	PORTB &= ~(1 << SS); 
 		
 	SPI_MasterTransmit(MCP_READ);
 	SPI_MasterTransmit(address);
@@ -39,7 +38,7 @@ char MCP_read(char address)
 
 void MCP_write(char address, char data)
 {
-	PORTB |= ~(1 << SS); 
+	PORTB &= ~(1 << SS); 
 	
 	SPI_MasterTransmit(MCP_WRITE);
 	SPI_MasterTransmit(address);
@@ -50,7 +49,7 @@ void MCP_write(char address, char data)
 
 void MCP_rts(char rts)
 {
-	PORTB |= ~(1 << SS);
+	PORTB &= ~(1 << SS);
 	
 	SPI_MasterTransmit(rts);
 	
@@ -60,7 +59,7 @@ void MCP_rts(char rts)
 
 char MCP_read_status(void)
 {
-	PORTB |= ~(1 << SS);
+	PORTB &= ~(1 << SS);
 	
 	SPI_MasterTransmit(MCP_READ_STATUS);
 	char status = SPI_SlaveReceive();
@@ -70,9 +69,9 @@ char MCP_read_status(void)
 	return status;
 }
 
-void MCP_bitmod(char address, char mask, char data)
+void MCP_bit_mod(char address, char mask, char data)
 {
-	PORTB |= ~(1 << SS);
+	PORTB &= ~(1 << SS);
 	
 	SPI_MasterTransmit(MCP_BITMOD);
 	SPI_MasterTransmit(address);
