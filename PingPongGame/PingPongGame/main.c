@@ -10,6 +10,7 @@
 #include "CAN.h"
 
 
+
 void test_buttons()
 {
 	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
@@ -326,23 +327,81 @@ void test_CAN()
 	_delay_ms(10);
 
 	msg *message = (msg*)malloc(sizeof(msg));
-	CAN_data_receive(message);
+	/*CAN_data_receive(message);
 	
 	for(int i = 0; i < message->length; i++)
 	{
 		printf("DATA[%d]: %d \n",i, message->data[i]);
 	}
 	printf("ID received: %02x \n",message->id);
-	printf("Length: %d \n",message->length);
+	printf("Length: %d \n",message->length);*/
+}
+
+void test_CAN_joystick()
+{
+	ram_init();
+	MCP_init();
+	CAN_init();
+	
+	while (1)
+	{
+		unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+
+		
+		bool val_joystick;  //testing if joystick pushbutton returns its value
+		
+		bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
+		val_joystick = (PINB & (1 << PB2));
+			
+		if (joystick_pressed == 0)
+		{
+			joystick_pressed = 1;
+		}
+		else
+		{
+			joystick_pressed = 0;
+		}
+			
+			
+		//printf("Joystick: %d\n", joystick_pressed);
+			
+			
+		//printf("X: %d Y: %d B: %d\n", x_volt, y_volt,joystick_pressed);
+		
+		msg can_message;
+		
+		can_message.id = 0x50;		//id for joystick value 
+		can_message.length = 3;
+		
+		can_message.data[0] = x_volt;
+		can_message.data[1] = y_volt;
+		can_message.data[2] = joystick_pressed;	
+		
+		CAN_message_send(can_message);
+		_delay_ms(10);
+
+		msg *message = (msg*)malloc(sizeof(msg));
+		CAN_data_receive(message);
+	
+		for(int i = 0; i < message->length; i++)
+		{
+			printf("DATA[%d]: %d \n",i, message->data[i]);
+		}
+		printf("ID received: %02x \n",message->id);
+		printf("Length: %d \n",message->length);
+		_delay_ms(3000);
+		}
+
 }
 
 int main(void)
 {
 	USART_Init(MYUBRR);
+	test_CAN_joystick();
 
 
-
-	test_CAN();
+	//test_CAN();
 	/*
 	MCP_init();
 	CAN_init();

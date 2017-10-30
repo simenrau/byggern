@@ -1,12 +1,13 @@
-#include "define.h"
-#include "CAN.h"
+#include "define2.h"
+#include "CAN2.h"
 #include "MCP2515.h"
 
 void CAN_init(void)
 {
 		/*SPI_MasterInit();
 		SPI_SlaveInit();*/
-		MCP_reset();
+		MCP_init();
+
 
 		MCP_write(MCP_CANCTRL, MODE_CONFIG);		
 
@@ -26,7 +27,7 @@ void CAN_init(void)
 		MCP_write(MCP_RXB1CTRL, 0x60);		// Receive buffer 1 control (turn mask/filters off, receive any message)
 
 		//MCP_write(MCP_CANCTRL, 0x44);		// Enable can controller
-		MCP_bit_mod(MCP_CANCTRL,MODE_MASK,MODE_LOOPBACK);
+		MCP_bit_mod(MCP_CANCTRL,MODE_MASK,MODE_NORMAL);
 
 	
 }
@@ -36,11 +37,10 @@ void CAN_message_send(msg can_tx)
 	//MCP_write(MCP_TXB0CTRL, 0x03);				
 	printf("\nCan ID sent: %02x \n", can_tx.id);
 
+	//MCP_write(MCP_TXB0SIDH, can_tx.id);
 	MCP_write(MCP_TXB0SIDH, can_tx.id);
 	MCP_write(MCP_TXB0SIDH, can_tx.id);
-
-	//MCP_write(MCP_TXB0SIDL, can_tx.id);
-
+	
 	MCP_write(MCP_TXB0DLC, (can_tx.length));
 	for(int i = 0; i < can_tx.length; i++)
 	{
@@ -58,12 +58,16 @@ void CAN_data_receive(msg *message)
 	//message.id = MCP_read(MCP_RXB0SIDL);
 
 	message->length = MCP_read(MCP_RXB0DLC);
-
+	
+	if (message->length > 8){
+		message->length = 8;
+	}
+	
 	for(int i = 0; i < message->length; i++) 
 	{
 		message->data[i] = MCP_read(MCP_RXB0DM + i);
 	}
-
+	
 	MCP_bit_mod(MCP_CANINTF,0x01,0);
 
 	//return message;
