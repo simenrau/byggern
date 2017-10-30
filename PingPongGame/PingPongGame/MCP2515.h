@@ -68,11 +68,11 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_CANINTE		0x2B
 #define MCP_CANINTF		0x2C
 #define MCP_EFLG		0x2D
-#define MCP_TXB0CTRL	0x30
-#define MCP_TXB0SIDH	0x31
-#define MCP_TXB0SIDL	0x32
-#define MCP_TXB0DLC		0x35
-#define MCP_TXB0D0		0x36
+#define MCP_TXB0CTRL	0x30+0
+#define MCP_TXB0SIDH	0x31+0
+#define MCP_TXB0SIDL	0x32+0
+#define MCP_TXB0DLC		0x35+0
+#define MCP_TXB0D0		0x36+0
 #define MCP_TXB1CTRL	0x40
 #define MCP_TXB2CTRL	0x50
 #define MCP_RXB0CTRL	0x60

@@ -304,34 +304,58 @@ void test_SPI()
 
 void test_CAN()
 {
-
-	msg can_message;
-	can_message.id = 42;
-	can_message.length = 5;
-	can_message.data[0] = 4;
-	can_message.data[1] = 4;
-	can_message.data[2] = 2;
-	can_message.data[3] = 9;
-	can_message.data[4] = 1;	
-	
 	MCP_init();
 	CAN_init();
+	ram_init();
+	
+	msg can_message;
+	can_message.id = 0x30;
+	can_message.length = 8;
+	
+	can_message.data[0] = 45;
+	can_message.data[1] = 9;
+	can_message.data[2] = 56;
+	can_message.data[3] = 1;
+	can_message.data[4] = 5;	
+	can_message.data[5] = 33;
+	can_message.data[6] = 43;
+	can_message.data[7] = 44;
+
 	
 	CAN_message_send(can_message);
-	_delay_ms(500);
-	msg message = CAN_data_receive();
-	for(int i = 0; i < message.length; i++)
+	_delay_ms(10);
+
+	msg *message = (msg*)malloc(sizeof(msg));
+	CAN_data_receive(message);
+	
+	for(int i = 0; i < message->length; i++)
 	{
-		printf("\nDATA[%d]: %d",i, message.data[i]);
+		printf("DATA[%d]: %d \n",i, message->data[i]);
 	}
-	printf("\nID: %d",message.id);
-	printf("\nlength: %d\n",message.length);
+	printf("ID received: %02x \n",message->id);
+	printf("Length: %d \n",message->length);
 }
 
 int main(void)
 {
 	USART_Init(MYUBRR);
+
+
+
 	test_CAN();
+	/*
+	MCP_init();
+	CAN_init();
+
+
+	int i =0;
+	while(i<10){
+		MCP_write(MCP_TXB0SIDH, 0x30);
+		_delay_ms(100);		
+		printf("temp: %02x\n",MCP_read(MCP_TXB0SIDH));
+		i++;
+	}*/
+
 	
 	
 	//SRAM_test();

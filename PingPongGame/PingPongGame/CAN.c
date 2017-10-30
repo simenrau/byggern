@@ -37,39 +37,40 @@ void CAN_init(void)
 
 void CAN_message_send(msg can_tx)
 {
-	//MCP_write(MCP_TXB0CTRL, 0x03);				//
-	
-	MCP_write(MCP_TXB0SIDH, (can_tx.id >> 3));
-	//MCP_write(MCP_TXB0SIDL, (can_tx.id << 5));
-	
+	//MCP_write(MCP_TXB0CTRL, 0x03);				
+	printf("\nCan ID sent: %02x \n", can_tx.id);
+
+	MCP_write(MCP_TXB0SIDH, can_tx.id);
+	MCP_write(MCP_TXB0SIDH, can_tx.id);
+
+	//MCP_write(MCP_TXB0SIDL, can_tx.id);
+
 	MCP_write(MCP_TXB0DLC, (can_tx.length));
-	
 	for(int i = 0; i < can_tx.length; i++)
 	{
 		MCP_write(MCP_TXB0D0 + i, can_tx.data[i]);
 	}
-	
 	MCP_rts(MCP_RTS_TX0);
 }
 
-msg CAN_data_receive()
+void CAN_data_receive(msg *message)
 {
-	msg message;
+	//msg message;
 
-	message.id = (MCP_read(MCP_RXB0SIDH));
+	message->id = (MCP_read(MCP_RXB0SIDH));
 
-	//message.id |= MCP_read(MCP_RXB0SIDL)  >> 5;
+	//message.id = MCP_read(MCP_RXB0SIDL);
 
-	message.length = MCP_read(MCP_RXB0DLC);
+	message->length = MCP_read(MCP_RXB0DLC);
 
-	for(int i = 0; i < message.length; i++) 
+	for(int i = 0; i < message->length; i++) 
 	{
-		message.data[i] = MCP_read(MCP_RXB0DM + i);
+		message->data[i] = MCP_read(MCP_RXB0DM + i);
 	}
 
 	MCP_bit_mod(MCP_CANINTF,0x01,0);
 
-	return message;
+	//return message;
 }
 
 

@@ -13,7 +13,7 @@ typedef struct
 
 void CAN_init(void);
 void CAN_message_send(msg can_tx);
-msg CAN_data_receive(void);
+void CAN_data_receive(msg *message);
 void CAN_int_vect(void);
 
 /*
