@@ -72,10 +72,9 @@ void test_joystick()
     {
         unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
         unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
-        unsigned int b_volt = read_adc(ADC_CHANNEL_JOY_B);
-        uint8_t is_down = (b_volt < button_threshold);
 
-		printf("%i, %i, %d\n", x_volt, y_volt, b_volt);
+       
+
 		_delay_ms(500);
 		
 		//Hvis verdiene er mellom 120 og 132 byte skal det returneres NEUTRAL
@@ -342,14 +341,20 @@ void test_CAN_joystick()
 	ram_init();
 	MCP_init();
 	CAN_init();
-	
+	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
 	while (1)
 	{
 		unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
 		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+		unsigned int SR_volt = read_adc(ADC_CHANNEL_SLIDER_R);
+		unsigned int SL_volt = read_adc(ADC_CHANNEL_SLIDER_L);
+
 
 		
 		bool val_joystick;  //testing if joystick pushbutton returns its value
+		bool button_left = (PINB & (1 << PB0));
+		bool button_right = (PINB & (1 << PB1));
+		
 		
 		bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
 		val_joystick = (PINB & (1 << PB2));
@@ -364,59 +369,45 @@ void test_CAN_joystick()
 		}
 			
 			
-		//printf("Joystick: %d\n", joystick_pressed);
-			
-			
-		//printf("X: %d Y: %d B: %d\n", x_volt, y_volt,joystick_pressed);
+		/*
+		printf("Joystick: %d\n", joystick_pressed);
+		printf("X: %d Y: %d B: %d\n", x_volt, y_volt,joystick_pressed);
+		printf("Left button: %d Right button: %d\n", button_left, button_right);*/
 		
 		msg can_message;
 		
-		can_message.id = 0x50;		//id for joystick value 
-		can_message.length = 3;
+		can_message.id = 0x70;		//id for joystick value 
+		can_message.length = 7;
 		
 		can_message.data[0] = x_volt;
 		can_message.data[1] = y_volt;
 		can_message.data[2] = joystick_pressed;	
+		can_message.data[3] = button_left;
+		can_message.data[4] = button_right;
+		can_message.data[5] = SL_volt;
+		can_message.data[6] = SR_volt;
+		
 		
 		CAN_message_send(can_message);
-		_delay_ms(10);
-
-		msg *message = (msg*)malloc(sizeof(msg));
-		CAN_data_receive(message);
-	
-		for(int i = 0; i < message->length; i++)
-		{
-			printf("DATA[%d]: %d \n",i, message->data[i]);
-		}
-		printf("ID received: %02x \n",message->id);
-		printf("Length: %d \n",message->length);
-		_delay_ms(3000);
-		}
-
+		_delay_ms(100);
+	}
 }
 
 int main(void)
 {
 	USART_Init(MYUBRR);
-	test_CAN_joystick();
-
-
-	//test_CAN();
-	/*
 	MCP_init();
 	CAN_init();
-
-
-	int i =0;
-	while(i<10){
-		MCP_write(MCP_TXB0SIDH, 0x30);
-		_delay_ms(100);		
-		printf("temp: %02x\n",MCP_read(MCP_TXB0SIDH));
-		i++;
+	test_CAN_joystick();
+	//test_buttons();
+	/*while (1)
+	{
+		
+		printf("%02x \n", MCP_read(MCP_CANCTRL));
+		
 	}*/
-
 	
-	
+	//test_CAN();
 	//SRAM_test();
 	//test_adc();
 	//test_buttons();

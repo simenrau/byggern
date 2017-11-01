@@ -9,6 +9,8 @@ int MCP_reset(void);
 char MCP_read(char address);
 void MCP_write(char address, char data);
 void MCP_bit_mod(char address, char mask, char data);
+void MCP_rts(char rts);
+char MCP_read_status(void);
 
 
 

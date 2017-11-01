@@ -83,6 +83,6 @@ void CAN_transmit_complete(void);*/
 
 void CAN_int_vect(void)
 {
-	MCP_bitmod(MCP_CANINTF, MCP_RXF0SIDL, MCP_RXF0SIDH);
+	MCP_bit_mod(MCP_CANINTF, MCP_RXF0SIDL, MCP_RXF0SIDH);
 }
 

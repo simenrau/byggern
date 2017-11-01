@@ -26,7 +26,7 @@ void CAN_init(void)
 		MCP_write(MCP_RXB1CTRL, 0x60);		// Receive buffer 1 control (turn mask/filters off, receive any message)
 
 		//MCP_write(MCP_CANCTRL, 0x44);		// Enable can controller
-		MCP_bit_mod(MCP_CANCTRL,MODE_MASK,MODE_LOOPBACK);
+		MCP_bit_mod(MCP_CANCTRL,MODE_MASK,MODE_NORMAL);
 
 	
 }
@@ -79,6 +79,6 @@ void CAN_transmit_complete(void);*/
 
 void CAN_int_vect(void)
 {
-	MCP_bitmod(MCP_CANINTF, MCP_RXF0SIDL, MCP_RXF0SIDH);
+	MCP_bit_mod(MCP_CANINTF, MCP_RXF0SIDL, MCP_RXF0SIDH);
 }
 

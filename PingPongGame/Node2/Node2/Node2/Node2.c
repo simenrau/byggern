@@ -13,7 +13,7 @@ void test_CAN_nodes()
 		{
 			char status = MCP_read_status();
 			char status1 = status & 0b0000011;
-			printf("Status: %d, MCP_read_status() %d \n",status1,status);
+			printf("Status: 0x%02x, Error flag:0x%02x \n",MCP_read(MCP_CANINTF),MCP_read(0x2D));
 			if (status1 == 3){  // flagg 1 og 2 høy
 				//CANINTF.RX0IF
 				//CANINTFL.RX1IF
@@ -37,8 +37,10 @@ void test_CAN_nodes()
 		{
 			printf("DATA[%d]: %d \n",i, message->data[i]);
 		}
-		printf("ID received: %02x \n",message->id);
+		
 		printf("Length: %d \n",message->length);
+		printf("ID received: %02x \n\n",message->id);
+		_delay_ms(100);
 	}
 }
 
@@ -70,16 +72,25 @@ void test_CAN_loopback()
 	}
 	printf("ID received: %02x \n",message->id);
 	printf("Length: %d \n",message->length);
+
+	/*can_message.data[0] = x_volt;
+	can_message.data[1] = y_volt;
+	can_message.data[2] = joystick_pressed;*/
 }
 
-void main(void)
+int main(void)
 {
+	MCP_init();
 	CAN_init();
-	USART_Init(MYUBRR);	
-	test_CAN_nodes();
-	//test_CAN_loopback();
+	USART_Init(MYUBRR);
+	test_CAN_nodes();	
+	/*while (1)
+	{		
+		printf(" %02x \n",MCP_read(MCP_CANCTRL));
+	}	
+	//test_CAN_loopback();*/
 	
 	
 	
-	
+	return 0;
 }
