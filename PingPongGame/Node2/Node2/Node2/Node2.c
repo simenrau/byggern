@@ -3,6 +3,8 @@
 #include "CAN2.h"
 #include "MCP2515.h"
 #include "SPI2.h"
+#include "PWM.h"
+#include "ADC_driver.h"
 
 void test_CAN_nodes()
 {
@@ -32,15 +34,18 @@ void test_CAN_nodes()
 	
 		msg *message = (msg*)malloc(sizeof(msg));
 		CAN_data_receive(message);
+
 	
 		for(int i = 0; i < message->length; i++)
 		{
 			printf("DATA[%d]: %d \n",i, message->data[i]);
 		}
+		Joy_to_pw(message->data[0]);
+		printf("%d",message->data[0]);
 		
 		printf("Length: %d \n",message->length);
 		printf("ID received: %02x \n\n",message->id);
-		_delay_ms(100);
+		
 	}
 }
 
@@ -73,24 +78,32 @@ void test_CAN_loopback()
 	printf("ID received: %02x \n",message->id);
 	printf("Length: %d \n",message->length);
 
-	/*can_message.data[0] = x_volt;
+/*
+	can_message.data[0] = x_volt;
 	can_message.data[1] = y_volt;
 	can_message.data[2] = joystick_pressed;*/
+}
+
+void ir_driver(void)
+{
+	DDRK &= ~(1 << PK0);
+	printf("AD1: %d \n",PINK & (1 << PINK0));
 }
 
 int main(void)
 {
 	MCP_init();
 	CAN_init();
+	PWM_init();	
 	USART_Init(MYUBRR);
-	test_CAN_nodes();	
-	/*while (1)
-	{		
-		printf(" %02x \n",MCP_read(MCP_CANCTRL));
-	}	
-	//test_CAN_loopback();*/
 	
+	//test_CAN_nodes();
 	
+	while(1)
+	{
+		ADC_read();
+	}
+
 	
 	return 0;
 }

@@ -389,7 +389,6 @@ void test_CAN_joystick()
 		
 		
 		CAN_message_send(can_message);
-		_delay_ms(100);
 	}
 }
 

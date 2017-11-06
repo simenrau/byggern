@@ -25,8 +25,8 @@
 //USB multifunction board
 #define ADC_CHANNEL_JOY_Y 0b00000100
 #define ADC_CHANNEL_JOY_X 0b00000101
-#define ADC_CHANNEL_SLIDER_R 0b00000110
-#define ADC_CHANNEL_SLIDER_L 0b00000111
+#define ADC_CHANNEL_SLIDER_L 0b00000110
+#define ADC_CHANNEL_SLIDER_R 0b00000111
 
 //RAM definitions
 #define bit_set(reg, bit) (reg |= (1 << bit))
