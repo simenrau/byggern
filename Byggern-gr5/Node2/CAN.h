@@ -1,6 +1,6 @@
 #ifndef CAN_H
 #define CAN_H
-#include "define2.h"
+#include "define.h"
 
 typedef struct
 {

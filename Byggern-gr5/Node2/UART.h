@@ -1,4 +1,4 @@
-#include "define2.h"
+#include "define.h"
 
 void USART_Init(unsigned int ubrr);
 

@@ -11,9 +11,6 @@
 #include <util/delay.h>
 #include <math.h>
 
-
-
-
 #define FOSC 16000000 //Clock Speed
 #define BAUD 9600
 #define MYUBRR FOSC/16/BAUD-1

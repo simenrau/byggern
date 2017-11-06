@@ -1,7 +1,7 @@
 #ifndef MCP2515_H
 #define MCP2515_H
 
-#include "define2.h"
+#include "define.h"
 
 
 int MCP_init(void);

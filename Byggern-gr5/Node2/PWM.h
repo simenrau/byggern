@@ -1,6 +1,6 @@
 #ifndef PWM_H
 #define PWM_H
-#include "define2.h"
+#include "define.h"
 
 void PWM_init(void);
 void PWM_duty(uint8_t duty_cycle);

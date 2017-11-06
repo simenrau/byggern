@@ -1,5 +1,5 @@
-#include "define2.h"
-#include "CAN2.h"
+#include "define.h"
+#include "CAN.h"
 #include "MCP2515.h"
 
 void CAN_init(void)

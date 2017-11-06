@@ -1,5 +1,5 @@
-#include "define2.h"
-#include "SPI2.h"
+#include "define.h"
+#include "SPI.h"
 
 #define SS_init PB0
 #define SCK PB1

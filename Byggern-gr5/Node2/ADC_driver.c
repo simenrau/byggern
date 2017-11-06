@@ -1,4 +1,4 @@
-#include "define2.h"
+#include "define.h"
 #include "ADC_driver.h"
 
 void ADC_init(void)

@@ -27,16 +27,16 @@
     <BootSegment>2</BootSegment>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
-      <framework-data xmlns="">
-        <options />
-        <configurations />
-        <files />
-        <documentation help="" />
-        <offline-documentation help="" />
-        <dependencies>
-          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.21.0" />
-        </dependencies>
-      </framework-data>
+      <framework-data>
+  <options />
+  <configurations />
+  <files />
+  <documentation help="" />
+  <offline-documentation help="" />
+  <dependencies>
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.6.0" />
+  </dependencies>
+</framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
     <com_atmel_avrdbg_tool_atmelice>
@@ -111,13 +111,22 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CAN2.c">
+    <Compile Include="ADC_driver.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="CAN2.h">
+    <Compile Include="ADC_driver.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="define2.h">
+    <Compile Include="CAN.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="CAN.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="define.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="MCP2515.c">
@@ -126,25 +135,22 @@
     <Compile Include="MCP2515.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="Node2.c">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="PWM.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="PWM.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="SPI2.c">
+    <Compile Include="SPI.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="SPI2.h">
+    <Compile Include="SPI.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="UART2.c">
+    <Compile Include="UART.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="UART2.h">
+    <Compile Include="UART.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

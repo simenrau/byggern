@@ -1,6 +1,6 @@
 #ifndef SPI2_H
 #define SPI2_H
-#include "define2.h"
+#include "define.h"
 
 #define SS PB7
 #define SCK PB1

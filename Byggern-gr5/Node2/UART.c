@@ -1,5 +1,5 @@
-#include "define2.h"
-#include "UART2.h"
+#include "define.h"
+#include "UART.h"
 
 FILE *uart;
 

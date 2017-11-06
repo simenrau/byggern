@@ -1,5 +1,5 @@
 #include "PWM.h"
-#include "define2.h"
+#include "define.h"
 
 #define  TC_TOP 1249
 

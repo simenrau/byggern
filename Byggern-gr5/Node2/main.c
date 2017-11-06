@@ -1,8 +1,8 @@
-#include "define2.h"
-#include "UART2.h"
-#include "CAN2.h"
+#include "define.h"
+#include "UART.h"
+#include "CAN.h"
 #include "MCP2515.h"
-#include "SPI2.h"
+#include "SPI.h"
 #include "PWM.h"
 #include "ADC_driver.h"
 
