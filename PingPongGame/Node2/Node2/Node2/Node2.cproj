@@ -42,7 +42,7 @@
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
-          <JtagDbgClock>1220000</JtagDbgClock>
+          <JtagDbgClock>1200000</JtagDbgClock>
         </InterfaceProperties>
         <InterfaceName>JTAG</InterfaceName>
       </ToolOptions>
@@ -111,6 +111,12 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC_driver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ADC_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="CAN2.c">
       <SubType>compile</SubType>
     </Compile>
@@ -124,6 +130,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="MCP2515.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="motor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="motor.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Node2.c">
@@ -141,12 +153,23 @@
     <Compile Include="SPI2.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="TWI_master.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="TWI_master.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="UART2.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="UART2.h">
       <SubType>compile</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Node2.cproj">
+      <SubType>compile</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

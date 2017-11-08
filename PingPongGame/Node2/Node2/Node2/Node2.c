@@ -5,6 +5,8 @@
 #include "SPI2.h"
 #include "PWM.h"
 #include "ADC_driver.h"
+#include "TWI_master.h"
+#include "motor.h"
 
 void test_CAN_nodes()
 {
@@ -40,8 +42,8 @@ void test_CAN_nodes()
 		{
 			printf("DATA[%d]: %d \n",i, message->data[i]);
 		}
-		Joy_to_pw(message->data[0]);
-		printf("%d",message->data[0]);
+		Joy_to_pw(message->data[6]);
+		printf("%d",message->data[6]);
 		
 		printf("Length: %d \n",message->length);
 		printf("ID received: %02x \n\n",message->id);
@@ -90,19 +92,62 @@ void ir_driver(void)
 	printf("AD1: %d \n",PINK & (1 << PINK0));
 }
 
+int ball_count(int life)
+{
+	int irval = 0;
+	for (int i = 0;i<10;i++){
+		irval = irval + ADC_read();
+	}
+	int ir_value = irval/10;
+	if (ir_value < 10){
+		life = life - 1;
+		if (life == 0)
+		{
+			printf("GAME OVER!");
+			return 0;
+		}
+		
+		_delay_ms(1000);
+		while(ir_value > 10){};
+	}
+	
+	return life;
+}
+
 int main(void)
 {
 	MCP_init();
 	CAN_init();
 	PWM_init();	
+	ADC_init();
 	USART_Init(MYUBRR);
+	
+	motor_init();
+	motor_enable();
+	
+	while(1){
+		motor_set(100,1);
+		printf("stuff %d \n",motor_read_encoder());
+	}
+	
+	
+	
+	
+	/*int life = 3;
+	while (1)
+	{
+		life = ball_count(life);
+				
+		if(life == 0)
+		{
+			break;
+		}
+		printf("ADC: %d\nLife: %d\n",ADC, life);
+
+	}*/
 	
 	//test_CAN_nodes();
 	
-	while(1)
-	{
-		ADC_read();
-	}
 
 	
 	return 0;
