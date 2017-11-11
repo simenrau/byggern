@@ -1,0 +1,19 @@
+/*
+ * heart.h
+ *
+ * Library of heart
+ */
+#ifndef hearts_H_
+#define hearts_H_
+
+
+#include "define.h"
+#include <avr/pgmspace.h>
+
+
+
+const unsigned char PROGMEM heart[2][11] = {
+	{0b00000000,0b00001110,0b00111011,0b00100001,0b01100011,0b11000110,0b01100011,0b00100001,0b00111011,0b00001110,0b00000000}, // 0
+	{0b00000000,0b00001110,0b00111111,0b00111111,0b01111111,0b11111110,0b01111111,0b00111111,0b00111111,0b00001110,0b00000000}, // 1
+};
+#endif

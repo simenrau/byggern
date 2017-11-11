@@ -114,22 +114,26 @@ int ball_count(int life)
 	return life;
 }
 
+	
+	
+
+
 int main(void)
 {
 	MCP_init();
 	CAN_init();
-	PWM_init();	
+	//PWM_init();	
 	ADC_init();
 	USART_Init(MYUBRR);
+	//test_CAN_nodes();
+	//motor_init();
+	//motor_enable();
 	
-	motor_init();
-	motor_enable();
-	
-	while(1){
+	/*while(1){
 		motor_set(100,1);
 		printf("stuff %d \n",motor_read_encoder());
 	}
-	
+	*/
 	
 	
 	
@@ -146,7 +150,6 @@ int main(void)
 
 	}*/
 	
-	//test_CAN_nodes();
 	
 
 	
