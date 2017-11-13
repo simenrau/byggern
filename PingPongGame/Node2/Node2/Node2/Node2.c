@@ -136,23 +136,52 @@ void test_motor()
 	
 void test_motor_can()
 {
+	int T = 0;
+	float I = 0;
 	while (1){
 				
 		msg *message = (msg*)malloc(sizeof(msg));
 		CAN_data_receive(message,0);
 
 		
-	/*	for(int i = 0; i < message->length; i++)
+
+		//motor_velocity(message->data[0] - 128);
+		
+		//--PRINTING VALUES----
+		/*printf("motor speed: %d",message->data[0]);
+		printf("Length: %d \n",message->length);
+		printf("ID received: %02x \n\n",message->id);
+		for(int i = 0; i < message->length; i++)
 		{
 			printf("DATA[%d]: %d \n",i, message->data[i]);
 		}*/
-		motor_velocity(message->data[0] - 128);
-		/*printf("motor speed: %d",message->data[0]);
 		
-		printf("Length: %d \n",message->length);
-		printf("ID received: %02x \n\n",message->id);
-		*/
+		//REGULATOR
+		
+		float Ki = 0.004;
+		float Kp = 0.03; 
+
+		
+		float y = motor_read_encoder();
+		float ref = (message->data[0] - 128)*33.2;
+		float e = ref-y;
+		I = e + I;
+		float u = Kp*e  + Ki*I; 
+		motor_velocity((int)u);
+		
+		printf("T: %d\n",T);
+		//printf("U: %d	I*Ki: %d	e*Kp: %d	y: %d	T: %d\n",(int)u,(int)(I*Ki),(int)(Kp*e),(int)y,(int)T);
+		
+		T = T+1;
+		//max min -> [4250,-4250]
+
 	}
+}
+
+
+void motor_PD()
+{
+	
 }
 
 
