@@ -10,44 +10,36 @@
 
 void test_CAN_nodes()
 {
-
+	
 	while (1){
-		
-		while (1)
-		{
-			char status = MCP_read_status();
-			char status1 = status & 0b0000011;
-			printf("Status: 0x%02x, Error flag:0x%02x \n",MCP_read(MCP_CANINTF),MCP_read(0x2D));
-			if (status1 == 3){  // flagg 1 og 2 høy
-				//CANINTF.RX0IF
-				//CANINTFL.RX1IF
-				printf("flagg 1 og 2\n");
-				break;
-			}
-			else if (status1 == 2){  // flagg 2 høy
-				//CANINTFL.RX1IF
-				break;
-			}
-			else if (status1 == 1){  // flagg 1 høy
-				//CANINTF.RX0IF
-				break;
-			}
-		}
-	
 		msg *message = (msg*)malloc(sizeof(msg));
-		CAN_data_receive(message);
+		
+		uint8_t status = MCP_read(MCP_CANINTF);
+		printf("Status: %x\n\n",status);
+		printf("CANINTF: %x\n\n",MCP_read(MCP_CANINTF));
+		printf("EFLG: %x\n\n",MCP_read(MCP_EFLG));
+		if (status & 0x01)
+		{
+			CAN_data_receive(message,0);
+			printf("Register 0:\n");
+		} else if (status & 0x02)
+		{
+			CAN_data_receive(message,1);
+			printf("Register 1:\n");
+		} else {continue;}
 
-	
+		printf("ID received: %02x \n",message->id);
+		printf("Length: %d \n",message->length);
+		
 		for(int i = 0; i < message->length; i++)
 		{
 			printf("DATA[%d]: %d \n",i, message->data[i]);
 		}
-		Joy_to_pw(message->data[6]);
-		printf("%d",message->data[6]);
 		
-		printf("Length: %d \n",message->length);
-		printf("ID received: %02x \n\n",message->id);
+		motor_velocity(message->data[0]-128);
+		printf("%d\n",message->data[0]);
 		
+		free(message);
 	}
 }
 
@@ -66,22 +58,34 @@ void test_CAN_loopback()
 	can_message.data[6] = 43;
 	can_message.data[7] = 44;
 
-	
-	CAN_message_send(can_message);
-	_delay_ms(10);
-	printf("1\n");
-	msg *message = (msg*)malloc(sizeof(msg));
-	CAN_data_receive(message);
-	printf("2\n");
-	for(int i = 0; i < message->length; i++)
+	while (1)
 	{
-		printf("DATA[%d]: %d \n",i, message->data[i]);
+		//CAN_message_send(can_message);
+		//delay_ms(10);
+		//printf("1\n");
+		uint8_t status = MCP_read(MCP_CANINTF);
+		printf("CANINTF: %x\n\n",status);
+		
+		msg *message = (msg*)malloc(sizeof(msg));
+		CAN_data_receive(message,0);
+		
+		status = MCP_read(MCP_CANINTF);
+		printf("CANINTF: %x\n\n",status);
+		
+		printf("2\n");
+		for(int i = 0; i < message->length; i++)
+		{
+			printf("DATA[%d]: %d \n",i, message->data[i]);
+		}
+		printf("ID received: %02x \n",message->id);
+		printf("Length: %d \n",message->length);
+		free(message);
+		_delay_ms(1000);
 	}
-	printf("ID received: %02x \n",message->id);
-	printf("Length: %d \n",message->length);
+	
+	
 
-/*
-	can_message.data[0] = x_volt;
+	/*can_message.data[0] = x_volt;
 	can_message.data[1] = y_volt;
 	can_message.data[2] = joystick_pressed;*/
 }
@@ -114,27 +118,64 @@ int ball_count(int life)
 	return life;
 }
 
+void test_motor()
+{
+	printf("Testing motor...\n");
+	motor_init();
+
+	int16_t x = 70;
+	while (1)
+	{
+		printf("Sending %d\n", x);
+		motor_velocity(x);
+		int16_t encoder = motor_read_encoder();
+		printf("Encoder: %d\n", encoder);
+		_delay_ms(500);
+	}
+}
 	
-	
+void test_motor_can()
+{
+	while (1){
+				
+		msg *message = (msg*)malloc(sizeof(msg));
+		CAN_data_receive(message,0);
+
+		
+	/*	for(int i = 0; i < message->length; i++)
+		{
+			printf("DATA[%d]: %d \n",i, message->data[i]);
+		}*/
+		motor_velocity(message->data[0] - 128);
+		/*printf("motor speed: %d",message->data[0]);
+		
+		printf("Length: %d \n",message->length);
+		printf("ID received: %02x \n\n",message->id);
+		*/
+	}
+}
 
 
 int main(void)
 {
+	//INIT
+	USART_Init(MYUBRR);
 	MCP_init();
 	CAN_init();
 	//PWM_init();	
 	ADC_init();
-	USART_Init(MYUBRR);
+	motor_init();
+	
+
+	
+	
+	sei();
+	test_motor_can();
+	
+	//test_CAN_loopback();
+	
 	//test_CAN_nodes();
-	//motor_init();
-	//motor_enable();
-	
-	/*while(1){
-		motor_set(100,1);
-		printf("stuff %d \n",motor_read_encoder());
-	}
-	*/
-	
+
 	
 	
 	/*int life = 3;
@@ -150,8 +191,6 @@ int main(void)
 
 	}*/
 	
-	
-
 	
 	return 0;
 }

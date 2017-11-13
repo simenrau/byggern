@@ -6,7 +6,7 @@ int MCP_init(void)
 {
 	SPI_MasterInit();
 	MCP_reset();
-	
+	_delay_us(10);
 	return 0;
 }
 
@@ -62,6 +62,7 @@ char MCP_read_status(void)
 	PORTB &= ~(1 << SS);
 	
 	SPI_MasterTransmit(MCP_READ_STATUS);
+	SPI_SlaveReceive();
 	char status = SPI_SlaveReceive();
 	
 	PORTB |= (1 << SS);

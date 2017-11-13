@@ -35,6 +35,6 @@ void SPI_SlaveInit(void)
 
 uint8_t SPI_SlaveReceive(void)
 {
-	SPI_MasterTransmit(0xff);
+	SPI_MasterTransmit(0x0);
 	return SPDR;
 }

@@ -773,7 +773,7 @@ int main(void)
 	//print_to_oled();
 	//print_oled();
 	//OLED_print_arrow();
-	menu();
+	oled_menu();
 	//test_SPI();	
 }
 
