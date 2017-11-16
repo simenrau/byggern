@@ -60,8 +60,6 @@ void motor_velocity(int16_t velocity)
 	uint8_t command = 0b00000000;
 	uint8_t msg[] = { MAX520_ADDRESS << 1, command, speed };
 	TWI_Start_Transceiver_With_Data(msg, sizeof(msg));
-	while (TWI_Transceiver_Busy()) {
-		printf("buizzzy...\n");
-	}
+	while (TWI_Transceiver_Busy()) {}
 	
 }

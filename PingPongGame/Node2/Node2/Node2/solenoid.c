@@ -3,14 +3,18 @@
 
 void solenoid_init()
 {
-	DDRF |= (1 << 1);
-	PORTF &= ~(1 << 1);
-	
+	DDRB |= (1 << PB7);    //13
+	PORTB |= (1 << PB7);
 }
 
-void solenoid_shoot()
+void solenoid_push()
 {
-	PORTF |= (1 << 1);
-	_delay_ms(solenoid_delay);
-	PORTF &= ~(1 << 1);
+	PORTB &= ~(1 << PB7);
+	/*_delay_ms(50);
+	PORTB |= (1 << PB7);*/
 }
+void solenoid_ret()
+{
+	PORTB |= (1 << PB7);
+}
+

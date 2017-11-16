@@ -9,7 +9,7 @@ void PWM_init(void){
 	DDRB |= (1 << PB6);
 	PWM_duty(50);
 	
-	TCCR1A |= (1 << WGM11) | (1 << COM1B1)	| (0 << COM1B0); //Kanskje A eller B istedet
+	TCCR1A |= (1 << WGM11) | (1 << COM1B1)	| (0 << COM1B0);
 	TCCR1B |= (1 << WGM13) | (1 << WGM12) | (1 << CS12);
 												
 }
@@ -20,7 +20,7 @@ void PWM_duty(uint8_t duty_cycle){
 }
 
 
-void Joy_to_pw(char joypos){
+void slider_to_pw(char joypos){
 	if (joypos> 255 || joypos < 0){
 		return;
 	}

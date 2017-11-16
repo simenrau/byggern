@@ -515,6 +515,7 @@ void print_menu(int sub_menu,int select_menu,int team_chosen)
 	_delay_ms(delay);
 	
 }
+
 void the_menu(void)
 {
 	
@@ -695,7 +696,309 @@ void test_CAN()
 	printf("ID received: %02x \n",message->id);
 	printf("Length: %d \n",message->length);
 }
+void new_oled_menu()
+{
+	const char menu[4][20] = { // menu 1, 13 plasser
+		"--HOVEDMENY--",
+		" Choose Team ",
+		" Gamemodes   ",
+		" High Score  ",
+	};
+	const char team[5][20] = {  // menu 2, 18 plasser
+		"     --TEAM--     ",
+		" German           ",
+		" Allied           ",
+		" Soviet           ",
+		" Sweden (cowards) ",
+	};
+	const char games[4][20] = {  // menu 3, 13 plasser
+		"--GAMEMODES--",
+		" Normal      ",
+		" Hard-mode   ",
+		" Dark souls  ",
+	};
+	const char team_print[4][22] = {  // print team, 20 plasser
+		"Team chosen: German ",
+		"Team chosen: Allied ",
+		"Team chosen: Soviet ",
+		"Team chosen: Sweden ",
+	};
+	
+	int select_menu = 1;
+	int sub_menu = 1;
+	int delay = 500;
+	int team_chosen = 0;
+	int gamemode_chosen = 0;
+	int lives = 0;
+	int i,j,k,lives_tot;
+	
+	while(1){
+		
+		select_menu = 1;  // setting the menu to the first choice every time
+		
+		while (sub_menu == 1){ // Main menu
 
+			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+			
+			if (y_volt < 125 && select_menu < 4){
+				select_menu++;
+			}
+			if (y_volt > 130 && select_menu > 1){
+				select_menu--;
+			}
+			printf("%d\n",select_menu);
+			
+			if(x_volt > 135){
+				if(sub_menu == 1){ 	//go to teams
+					sub_menu = 2;
+					break;
+				}
+				if(sub_menu == 2){ 	 // go to gamemodes
+					sub_menu = 3;
+					break;
+				}
+				if(sub_menu == 3){   // display highscore
+					sub_menu = 4;
+					break;
+				}
+			}
+			
+			clear_oled();
+			oled_set_column(0);
+			oled_set_page(0);
+			
+			for (k = 0; k < 4; k++){
+				for (j = 0; j < 13; j++){
+					for (i = 0; i < 5; i++){
+						if(select_menu==k){
+							oled_set_column(i+(j*5));
+							write_d(~pgm_read_byte(&font5[menu[k][j] - ' '][i]));
+						}
+						else{
+							oled_set_column(i+(j*5));
+							write_d(pgm_read_byte(&font5[menu[k][j] - ' '][i]));
+						}
+					}
+				}
+				oled_set_page(k+1);
+			}
+			_delay_ms(delay);
+		}
+		while(sub_menu == 2){	 // Team menu
+
+			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+
+			
+			if (y_volt < 125 && select_menu < 5){	//5 lines
+				select_menu++;
+			}
+			if (y_volt > 135 && select_menu > 1){
+				select_menu--;
+			}
+			if(x_volt < 60){
+				sub_menu = 1;
+				break;
+			}
+			if(x_volt > 150){
+				if (select_menu == 1){	//German
+					team_chosen = 0;
+				}
+				if (select_menu == 2){	//allied
+					team_chosen = 1;
+				}
+				if (select_menu == 3){	//soviet
+					team_chosen = 2;
+				}
+				if (select_menu == 4){	//sweden
+					team_chosen = 3;
+				}
+				sub_menu = 4;	//print chosen team
+				break;
+			}
+			
+			clear_oled();
+			oled_set_column(0);
+			oled_set_page(0);
+			
+			for (k = 0; k < 5; k++){
+				for (j = 0; j < 18; j++){
+					for (i = 0; i < 5; i++){
+						if(select_menu==k){
+							oled_set_column(i+(j*5));
+							write_d(~pgm_read_byte(&font5[team[k][j] - ' '][i]));
+						}
+						else{
+							oled_set_column(i+(j*5));
+							write_d(pgm_read_byte(&font5[team[k][j] - ' '][i]));
+						}
+					}
+				}
+				oled_set_page(k+1);
+			}
+			_delay_ms(delay);
+		}
+		
+
+		while (sub_menu == 3){ 	//Gamemodes menu
+
+			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+
+			
+			if (y_volt < 125 && select_menu < 4){
+				select_menu++;
+			}
+			if (y_volt > 135 && select_menu > 1){
+				select_menu--;
+			}
+			if(x_volt < 60){
+				sub_menu = 1;
+				break;
+			}
+			if(x_volt > 150){
+				if (select_menu == 1){	//normal
+					gamemode_chosen = 0;
+					lives = 10;
+					sub_menu =6;
+					break;
+				}
+				if (select_menu == 2){	//hard-mode
+					gamemode_chosen = 1;
+					lives = 3;
+					sub_menu =6;
+					break;
+				}
+				if (select_menu == 3){	//dark souls
+					gamemode_chosen = 2;
+					lives = 1;
+					sub_menu =6;
+					break;
+				}
+
+			}
+			
+			clear_oled();
+			oled_set_column(0);
+			oled_set_page(0);
+			
+			for (k = 0; k < 4; k++){
+				for (j = 0; j < 13; j++){
+					for (i = 0; i < 5; i++)	{
+						if(select_menu==k)		{
+							oled_set_column(i+(j*5));
+							write_d(~pgm_read_byte(&font5[team[k][j] - ' '][i]));
+						}
+						else{
+							oled_set_column(i+(j*5));
+							write_d(pgm_read_byte(&font5[team[k][j] - ' '][i]));
+						}
+					}
+				}
+				oled_set_page(k+1);
+			}
+			_delay_ms(delay);
+		}
+		
+		
+		while (sub_menu == 4){	//print team chosen
+
+			clear_oled();
+			oled_set_column(0);
+			oled_set_page(0);
+			
+			for (k = 0; k < 1; k++){
+				for (j = 0; j < 20; j++){
+					for (i = 0; i < 5; i++){
+						oled_set_column(i+(j*5));
+						write_d(pgm_read_byte(&font5[team_print[team_chosen][j] - ' '][i]));
+						
+					}
+				}
+				oled_set_page(k+1);
+			}
+			sub_menu = 1;
+			_delay_ms(delay*5);
+		}
+		while(sub_menu==5){
+			
+			//print highscore
+			sub_menu = 1;
+		}
+		while(sub_menu==6){
+			sub_menu = 1;		//  <----
+			break;				//går direkte ut
+			lives_tot = lives;
+			// --starte en timer kanksje--
+			
+			while(lives>0){
+				
+				game_running_print(lives,gamemode_chosen,team_chosen,lives_tot);
+				lives  = can_joystick(lives);
+				
+				//program som sender info til node 2 og får igjen om det blir mistset liv
+				//lagrer nytt antall liv
+			}
+			sub_menu = 5;  // highscore
+		}
+	}
+
+}
+void game_running_print(int lives, int gamemode,int team_chosen,int lives_tot){
+
+	int i,j,k;
+	
+	const char team_gaming[5][20] = {  // menu 2, 15 plasser
+		" Team: Germany ",
+		" Team: Allied  ",
+		" Team: Soviet  ",
+		" Team: Sweden  ",
+	};
+	const char hearts[2][20] = {  // hearts
+		" ", //empty heart -- space ---
+		"!", //full heart  --- ! ---
+	};
+	const char gameOn[1][20] = {  // menu  -- game on--, 10 plasser
+		"--GAMING--",
+	};
+	
+
+	clear_oled();
+	oled_set_column(0);
+	oled_set_page(0);
+	for (j = 0; j < 10; j++){
+		for (i = 0; i < 5; i++){
+			oled_set_column(i+(j*5));
+			write_d(pgm_read_byte(&font5[gameOn[0][j] - ' '][i]));
+			
+		}
+	}
+	oled_set_page(1);
+	
+	for (j = 0; j < 15; j++){
+		for (i = 0; i < 5; i++){
+			oled_set_column(i+(j*5));
+			write_d(pgm_read_byte(&font5[team_gaming[team_chosen][j] - ' '][i]));
+			
+		}
+	}
+	oled_set_page(2);
+	
+	for(k = 0;k < lives;k++){
+		for (i = 0; i < 11; i++){
+			if(lives_tot < k ){		//if hearts now is less than hearts startet with, print empty heart.
+				oled_set_column(i+(k*11));
+				write_d(pgm_read_byte(&font5[hearts[0][0] - ' '][i]));
+			}
+			else{
+				oled_set_column(i+(k*11));
+				write_d(pgm_read_byte(&font5[hearts[1][0] - ' '][i]));
+			}
+		}
+	}
+	
+}
 void test_CAN_joystick()
 {
 	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
@@ -733,7 +1036,7 @@ void test_CAN_joystick()
 		
 		msg can_message;
 		
-		can_message.id = 0x70;		//id for joystick value 
+		can_message.id = 0x70;	
 		can_message.length = 7;
 		
 		can_message.data[0] = x_volt;
@@ -743,6 +1046,7 @@ void test_CAN_joystick()
 		can_message.data[4] = button_right;
 		can_message.data[5] = SL_volt;
 		can_message.data[6] = SR_volt;
+
 		
 		
 		CAN_message_send(can_message);
@@ -754,15 +1058,20 @@ void test_CAN_joystick()
 			printf("Resetting..\n");
 		}*/
 		
-/*
-		
-		printf("x_volt: %d \n",x_volt);
-		printf("y_volt: %d \n",y_volt);
+
+		//printf("y_volt: %d \n",y_volt);
 		printf("joy: %d \n",joystick_pressed);
-		printf("bl: %d \n",button_left);
+		/*printf("bl: %d \n",button_left);
 		printf("br: %d \n",button_right);
 		printf("sl: %d \n",SL_volt);
 		printf("sr: %d \n\n",SR_volt);*/
+		
+		msg *message = (msg*)malloc(sizeof(msg));
+		
+		CAN_data_receive(message);
+		printf("LIFE: %d\n", message->data[7]);
+				
+		free(message);
 		
 	}
 }
@@ -777,13 +1086,25 @@ void main(void)
 	
 		
 	//OLED
-	//oled_init();
-	//init_program();
+	oled_init();
+	init_program();
 	//oled_menu();
 	
-	test_CAN_joystick();
+	
+	//oled_menu();
+	new_oled_menu();
 	
 	
+	//test_CAN_joystick();
+/*
+	while(1){
+		msg *message = (msg*)malloc(sizeof(msg));
+		CAN_data_receive(message);
+		printf("DATA: %d\n", message->data[0]);
+		printf("DATA: %d\n", message->data[1]);		
+		
+		free(message);
+	}*/
 	//test_buttons();
 	//test_CAN();
 	//SRAM_test();

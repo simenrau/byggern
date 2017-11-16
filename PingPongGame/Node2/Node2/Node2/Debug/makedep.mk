@@ -14,6 +14,8 @@ Node2.c
 
 PWM.c
 
+solenoid.c
+
 SPI2.c
 
 TWI_master.c

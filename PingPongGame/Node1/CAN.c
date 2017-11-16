@@ -49,7 +49,7 @@ void CAN_message_send(msg can_tx)
 	}
 	MCP_rts(MCP_RTS_TX0);
 	
-	printf("canstst: %x\n",MCP_read(MCP_CANSTAT));
+	//printf("canstst: %x\n",MCP_read(MCP_CANSTAT));
 }
 
 void CAN_data_receive(msg *message)
@@ -57,9 +57,6 @@ void CAN_data_receive(msg *message)
 	//msg message;
 
 	message->id = (MCP_read(MCP_RXB0SIDH));
-
-	//message.id = MCP_read(MCP_RXB0SIDL);
-
 	message->length = MCP_read(MCP_RXB0DLC);
 
 	for(int i = 0; i < message->length; i++) 
