@@ -351,8 +351,6 @@ void oled_menu()
 
 void test_SPI()
 {
-	
-
 	/*while(1)
 	{
 		SPI_MasterTransmit(0b111101111);	
@@ -872,19 +870,16 @@ void main(void)
 	//OLED
 	oled_init();
 	init_program();
-
 	new_oled_menu();
 	
-	
 /*
-
 	int i = 10;
 	while(i>=0){
 		game_running_print(10,1,1,i);
 		_delay_ms(500);
 		i--;
-	}*/
-	
+	}
+	*/
 	
 	//oled_menu();
 

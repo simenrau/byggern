@@ -17,15 +17,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_abbrev 00000c15  00000000  00000000  000046ef  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000de2  00000000  00000000  00005304  2**0
+  7 .debug_line   00000de0  00000000  00000000  00005304  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  0000054c  00000000  00000000  000060e8  2**2
+  8 .debug_frame  0000054c  00000000  00000000  000060e4  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000005c3  00000000  00000000  00006634  2**0
+  9 .debug_str    000005c3  00000000  00000000  00006630  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00001db6  00000000  00000000  00006bf7  2**0
+ 10 .debug_loc    00001db6  00000000  00000000  00006bf3  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000228  00000000  00000000  000089ad  2**0
+ 11 .debug_ranges 00000228  00000000  00000000  000089a9  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -2961,7 +2961,6 @@ void main(void)
     1252:	0e 94 66 09 	call	0x12cc	; 0x12cc <oled_init>
 	init_program();
     1256:	0e 94 79 09 	call	0x12f2	; 0x12f2 <init_program>
-
 	new_oled_menu();
     125a:	0e 94 a8 03 	call	0x750	; 0x750 <new_oled_menu>
 
