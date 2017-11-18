@@ -25,7 +25,6 @@ void slider_to_pw(char joypos){
 		return;
 	}
 	char pos = (char)round(45+(1.0*joypos/255)*60);
-	printf("%d\n",pos);
 	PWM_duty(pos);
 
 }

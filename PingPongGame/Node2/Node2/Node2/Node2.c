@@ -99,7 +99,7 @@ void ir_driver(void)
 	printf("AD1: %d \n",PINK & (1 << PINK0));
 }
 
-int ball_count(int life)
+char ball_count(char life)
 {
 	int irval = 0;
 	for (int i = 0;i<10;i++){
@@ -110,7 +110,7 @@ int ball_count(int life)
 		life = life - 1;
 		if (life == 0)
 		{
-			printf("GAME OVER!");
+			printf("GAME OVER!\n");
 			return 0;
 		}
 		
@@ -118,14 +118,13 @@ int ball_count(int life)
 		while(ir_value < 10)
 		{
 			ir_value = ADC_read();
-			printf("%d\n",ir_value);
+			printf("reset ball..\n");
 		}
 		_delay_ms(1000);
 	}
 	
 	return life;
 }
-
 void test_motor()
 {
 	printf("Testing motor...\n");
@@ -140,8 +139,7 @@ void test_motor()
 		printf("Encoder: %d\n", encoder);
 		_delay_ms(500);
 	}
-}
-	
+}	
 void test_motor_can()
 {
 	int T = 0;
@@ -151,41 +149,138 @@ void test_motor_can()
 		msg *message = (msg*)malloc(sizeof(msg));
 		CAN_data_receive(message);
 		
-		//motor_velocity(message->data[0]);
+		float Ki = 0.005;
+		float Kp = 0.05; 
 		
-		//--PRINTING VALUES----
-		/*printf("motor speed: %d",message->data[0]);
-		printf("Length: %d \n",message->length);
-		printf("ID received: %02x \n\n",message->id);
-		for(int i = 0; i < message->length; i++)
+		if(I > 20000)
 		{
-			printf("DATA[%d]: %d \n",i, message->data[i]);
-		}*/
-		
-		//REGULATOR
-		
-		float Ki = 0.004;
-		float Kp = 0.03; 
+			I = 0;
+		}
 
 		
 		float y = motor_read_encoder();
-		float ref = (message->data[0] - 128)*33.2;
+		float ref = (-message->data[5] + 128)*35.2;
 		float e = ref-y;
 		I = e + I;
-		float u = Kp*e  + Ki*I; 
+		float u = Kp*e; 
 		motor_velocity((int)u);
 		
+		if (message->data[2] == 1)
+		{
+			solenoid_push();
+		}
+		else{
+			solenoid_ret();
+		}
+		slider_to_pw(message->data[0]);
+		
+		
+		//printf("I: %d\n",I);
 		//printf("T: %d\n",T);
-		//printf("U: %d	I*Ki: %d	e*Kp: %d	y: %d	T: %d\n",(int)u,(int)(I*Ki),(int)(Kp*e),(int)y,(int)T);
-		printf("Data: %d", message->data[0]);
+		//printf("U: %d	I: %d	e: %d	y: %d	T: %d\n",(int)u,(int)(I),(int)(e),(int)y,(int)T);
+		//printf("Data: %d", message->data[0]);
 		
 		T = T+1;
 		//max min -> [4250,-4250]
 
 	}
 }
-void can_transmit_receive()
+
+void game()
 {
+	int T = 0;
+	float I = 0;
+	char lives_tot,lives;
+	char i = 10;
+	while(1){
+		while(i == 10) // while 'not in game', chill 
+		{
+			msg *message = (msg*)malloc(sizeof(msg));
+			CAN_data_receive(message);
+			i = message->data[2];
+			free(message);
+			_delay_ms(1000);
+			printf("waiting...\n");
+		}
+		
+		msg *message = (msg*)malloc(sizeof(msg));
+		CAN_data_receive(message);
+		
+		lives_tot = message->data[6];
+		lives = lives_tot;
+	
+		free(message);
+		
+		while(i != 10){
+		
+			msg *message = (msg*)malloc(sizeof(msg));
+			CAN_data_receive(message);
+
+		
+			float Ki = 0.005;
+			float Kp = 0.05;
+		
+			if(I > 20000)
+			{
+				I = 0;
+			}
+
+			
+			
+			float y = motor_read_encoder();
+			float ref = (-message->data[5] + 128)*35.2;
+			float e = ref-y;
+			I = e + I;
+			float u = Kp*e;
+			motor_velocity((int)u);
+			
+			if (message->data[2] == 1)
+			{
+				solenoid_push();
+			}
+			else{
+				solenoid_ret();
+			}
+			slider_to_pw(message->data[0]);
+			
+			
+			
+			
+			
+			lives = ball_count(lives);
+			printf("lives: %d",lives);
+			msg can_message;
+					
+			can_message.id = 70;
+			can_message.length = 8;
+			can_message.data[0] = message->data[0];
+			can_message.data[1] = message->data[1];
+			can_message.data[2] = message->data[2];
+			can_message.data[3] = message->data[3];
+			can_message.data[4] = message->data[4];
+			can_message.data[5] = message->data[5];
+			can_message.data[6] = message->data[6];
+			can_message.data[7] = lives;
+			_delay_ms(5);
+			
+			//printf("0: %d	1: %d	2: %d	3: %d	4: %d	5: %d	6: %d	7: %d\n",can_message.data[0],can_message.data[1],can_message.data[2],can_message.data[3],can_message.data[4],can_message.data[5],can_message.data[6],can_message.data[7]);
+					
+			CAN_message_send(can_message);
+
+			i = message->data[2];
+			
+			if(lives < 1){
+				i =10;
+			}
+			free(message);
+		}
+	}
+	
+	
+	
+}
+
+void can_transmit_receive(){
 	int hearts_tot,life;
 	int k = 0;
 	while (1)
@@ -206,7 +301,7 @@ void can_transmit_receive()
 		motor_velocity(-message->data[0]+128);
 		slider_to_pw(-message->data[5]);
 		hearts_tot = message->data[6];
-		printf("message->data[5]: %d\n",message->data[5]);
+		printf("slider: %d\n",message->data[5]);
 
 		
 		if(k==0){
@@ -293,7 +388,7 @@ void can_transmit_receive()
 
 int main(void)
 {
-	//INIT
+	//INIT//
 	USART_Init(MYUBRR);
 	MCP_init();
 	CAN_init();
@@ -302,17 +397,16 @@ int main(void)
 	motor_init();
 	solenoid_init();
 		
-	//Interupts
+	//INTERRUPTS//
 	sei();
 	
-	//Programs
+	//PROGRAM//
+	//can_transmit_receive();			//includes solenoid, motor, servo actions
+
 	//test_motor_can();
 	//test_CAN_nodes();
-	can_transmit_receive();
-
-
 	
-	
+	game();
 	
 	return 0;
 }
