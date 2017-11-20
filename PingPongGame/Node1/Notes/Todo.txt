@@ -1,2 +1,0 @@
-GJORT!	Legge til 'push down button' på USB multifunction board \n
-Legge til program for 'sliders'
