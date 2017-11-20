@@ -9,339 +9,103 @@
 #include "SPI.h"
 #include "CAN.h"
 #include "hearts.h"
-//#include "buzzer.h"
 
 
-void test_buttons()
+void game()
 {
-	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
-	 
-	bool val_joystick;  //testing if joystick pushbutton returns its value
-	while(1)
-	{		
-		bool button_left = (PINB & (1 << PB0));
-		bool button_right = (PINB & (1 << PB1));
-		
-		bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
-		val_joystick = (PINB & (1 << PB2));
-		
-		if (joystick_pressed == 0)
-		{
-			joystick_pressed = 1;
-		}
-		else
-		{
-			joystick_pressed = 0;
-		}
-		
-		
-		printf("Joystick: %d\n", joystick_pressed);										//Pull-up resistor gjør at det fungerer
-		printf("Left button: %d Right button: %d\n", button_left, button_right);
-	}
-	  
-}
-
-void test_adc()
-{
-		ram_init();
-		
-		printf("Testing ADC:\n");
-		
-		while (1)
-	{
-			uint8_t ch1 = read_adc(0);
-			uint8_t ch2 = read_adc(1);
-			uint8_t ch3 = read_adc(2);
-			uint8_t ch4 = read_adc(3);
-			printf("%d %d %d %d\n", ch1, ch2, ch3, ch4);
-			_delay_ms(1000);
-	}
-	
-}	
-
-void test_joystick()
-{
-    USART_Init(MYUBRR);
-    ram_init();
-    uint8_t min_x = 255;
-    uint8_t max_x = 0;
-    uint8_t min_y = 255;
-    uint8_t max_y = 0;
-    uint8_t button_threshold = 128;
-	
-    while (1)
-    {
-        unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
-        unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
-
-       
-
-		_delay_ms(500);
-		
-		//Hvis verdiene er mellom 120 og 132 byte skal det returneres NEUTRAL
-		if((x_volt >= 124 && x_volt <= 132) && (y_volt >= 122 && y_volt <= 130))
-		{
-			printf("NEUTRAL\n");
-		}
-		if (y_volt > 130)
-		{
-			printf("UP\n");
-		}
-		if (y_volt < 122)
-		{
-			printf("DOWN\n");
-		}
-		if (x_volt > 132)
-		{
-			printf("RIGHT\n");
-		}
-		if (x_volt < 124)
-		
-		{
-			printf("LEFT\n");
-		}
-		
-		
-		printf("\n\n\n");
-		
-		
-    }
-	
-
-}
-
-void print_from_usart_to_oled()
-{
-	
-	oled_init();
-	init_program();
-	clear_oled();
-	oled_set_page(0);
-	int i,j = 0;
-	int count = 1;
-	while(1)
-	{
-		char a = USART_Receive();
-		
-		for(i = 0; i < 5; i++)
-			{
-			oled_set_column(0 + i+(j*5));
-			write_d(pgm_read_byte(&font5[a - ' '][i]));
-			}
-		if (j > 25)
-			{
-			oled_set_page(count);
-			count = count+1;
-			j=0;
-			}
-
-		j++;
-	}
-}
-
-void print_oled()
-{
-	oled_init();
-	init_program();
-	clear_oled();
-	
-	oled_set_page(0);
-	char c[27] = "Naa er det snart jul iaarrs";
-	int i,j;
-	for(j = 0;j<25;j++)
-	{
-
-		for(i = 0;i<5;i++)
-			{
-			oled_set_column(0 + i+(j*5));
-			write_d(~pgm_read_byte(&font5[c[j] - ' '][i]));
-			printf("%c%\n",c[i]);
-			}
-	}
-	
-}
-void test_SPI()
-{
-	/*while(1)
-	{
-		SPI_MasterTransmit(0b111101111);	
-	}*/
-	
-	//SPI_SlaveInit();
-	//SPI_SlaveReceive();
-	MCP_init();
-}
-
-void test_CAN()
-{
-	MCP_init();
-	CAN_init();
-	ram_init();
-	
-	msg can_message;
-	can_message.id = 0x30;
-	can_message.length = 8;
-	
-	can_message.data[0] = 45;
-	can_message.data[1] = 9;
-	can_message.data[2] = 56;
-	can_message.data[3] = 1;
-	can_message.data[4] = 5;	
-	can_message.data[5] = 33;
-	can_message.data[6] = 43;
-	can_message.data[7] = 44;
-
-	
-	CAN_message_send(can_message);
-	_delay_ms(10);
-
-	msg *message = (msg*)malloc(sizeof(msg));
-	CAN_data_receive(message);
-	
-	for(int i = 0; i < message->length; i++)
-	{
-		printf("DATA[%d]: %d \n",i, message->data[i]);
-	}
-	printf("ID received: %02x \n",message->id);
-	printf("Length: %d \n",message->length);
-}
-
-
-/*
-char can_run_game(char hearts_tot){
-	
-	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
-	
-	unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
-	unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
-	unsigned int SR_volt = read_adc(ADC_CHANNEL_SLIDER_R);
-	unsigned int SL_volt = read_adc(ADC_CHANNEL_SLIDER_L);
-
-
-	
-	bool val_joystick;  //testing if joystick pushbutton returns its value
-	bool button_left = (PINB & (1 << PB0));
-	bool button_right = (PINB & (1 << PB1));
-	
-	
-	bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
-	val_joystick = (PINB & (1 << PB2));
-	
-	if (joystick_pressed == 0)
-	{
-		joystick_pressed = 1;
-	}
-	else
-	{
-		joystick_pressed = 0;
-	}
-	
-
-	msg can_message;
-	
-	can_message.id = 0x70;
-	can_message.length = 7;
-	
-	can_message.data[0] = x_volt;
-	can_message.data[1] = y_volt;
-	can_message.data[2] = joystick_pressed;
-	can_message.data[3] = button_left;
-	can_message.data[4] = button_right;
-	can_message.data[5] = SR_volt;
-	can_message.data[6] = hearts_tot;
-
-
-	
-	
-	CAN_message_send(can_message);
-
-	msg *message = (msg*)malloc(sizeof(msg));
-	
-	CAN_data_receive(message);
-	char lives = message->data[7];
-	
-	free(message);
-	
-	return lives;
-}*/
-
-void new_oled_menu()
-{
-	const char menu[4][20] = { // menu 1, 13 plasser
+	//MENU CONSTANTS
+	const char menu[4][13] = { // menu 1
 		"--HOVEDMENY--",
 		" Choose Team ",
 		" Gamemodes   ",
-		" High Score  ",
 	};
-	const char team[5][20] = {  // menu 2, 18 plasser
+	const char team[5][18] = {  // menu 2
 		"     --TEAM--     ",
 		" German           ",
 		" Allied           ",
 		" Soviet           ",
 		" Sweden (cowards) ",
 	};
-	const char games[4][20] = {  // menu 3, 13 plasser
+	const char games[4][13] = {  // menu 3
 		"--GAMEMODES--",
 		" Normal      ",
 		" Hard-mode   ",
 		" Dark souls  ",
 	};
-	const char team_print[4][22] = {  // print team, 20 plasser
+	const char team_print[4][20] = {  // print team
 		"Team chosen: German ",
 		"Team chosen: Allied ",
 		"Team chosen: Soviet ",
 		"Team chosen: Sweden ",
 	};
-	const char game_over[1][25] = {  // game over, 22 PLASSER
+	const char game_over[1][22] = {  // game over
 		"     G A M E  O V E R ",
 	};
-	const char team_gaming[4][20] = {  // menu 2, 15 plasser
+	const char team_gaming[4][15] = {  // menu 4
 		" Team: Germany ",
 		" Team: Allied  ",
 		" Team: Soviet  ",
 		" Team: Sweden  ",
 	};
-	
-	const char hearts[2][20] = {  // hearts
+	const char hearts[2][1] = {  // hearts
 		" ", //empty heart -- space ---
 		"!", //full heart  --- ! ---
 	};
-	
-	const char gameOn[1][20] = {  // menu  -- game on--, 17 plasser
+	const char gameOn[1][17] = {  // menu  -- game on--,
 		"-- G A M I N G --",
 	};
-	
-	const char lives_rem[1][22] = {  // DISPLAY HEARTS, 16 plasser
-		"Lives remaining:",
+	const char score[1][9] = {  
+			"S C O R E",
+	};
+	const char numbers[10][1] = {  
+		"0",
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6",
+		"7",
+		"8",
+		"9",
 	};
 
 	
-	
-	int select_menu = 1;    // place in menu
-	int sub_menu = 1;		//which menu
-	int delay = 500;		
-	int team_chosen = 0;
-	int gamemode_chosen = 0;
+	//CONSTANTS
+	int select_menu = 1;		// place in menu
+	int sub_menu = 1;			//which menu
+	int delay = 200;		
+	int team_chosen = 0;		//default germany
+	int gamemode_chosen;	
 	char lives = 0;
 	char lives_tot = 0;
 	int i,j,k;
-	int count = 0;
+	long int timer; 
+	int count = 0;		// number of digits in the score
+	
+	
+	
+	// SETTING NOED 2 TO WAITING STATE
 	msg can_message;
 	
 	can_message.id = 0x70;
-	can_message.length = 7;				// setting node 2 to w8ting
+	can_message.length = 7;				
 	can_message.data[2] = 10;
 	
 	CAN_message_send(can_message);
 	
+	//START PROGRAM
 	while(1){
+		
 		select_menu = 1;  // setting the menu to the first choice every time
-		while (sub_menu == 1){ // Main menu
+		
+		// MAIN MENU
+		while (sub_menu == 1){ 
 
 			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
 			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
 			
-			if (y_volt < 125 && select_menu < 3){
+			if (y_volt < 125 && select_menu < 2){
 				select_menu++;
 			}
 			if (y_volt > 130 && select_menu > 1){
@@ -349,28 +113,23 @@ void new_oled_menu()
 			}
 			
 			if(x_volt > 135){
-				if(select_menu == 1){ 	//go to teams
+				if(select_menu == 1){ 	//go to teams menu
 					sub_menu = 2;
-					_delay_ms(delay);
+
 					break;
 				}
-				if(select_menu == 2){ 	 // go to gamemodes
+				if(select_menu == 2){ 	 // go to gamemodes menu
 					sub_menu = 3;
-					_delay_ms(delay);
+
 					break;
 				}
-			/*	if(select_menu == 3){   // display highscore
-					sub_menu = 4; 
-					_delay_ms(delay);
-					break;
-				}*/
 			}
 			
 			clear_oled();
 			oled_set_column(0);
 			oled_set_page(0);
 			
-			for (k = 0; k < 4; k++){
+			for (k = 0; k < 3; k++){
 				for (j = 0; j < 13; j++){
 					for (i = 0; i < 5; i++){
 						if(select_menu==k){
@@ -387,39 +146,9 @@ void new_oled_menu()
 			}
 			_delay_ms(delay);
 		}
-		while(sub_menu == 2){	 // Team menu
-
-			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
-			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
-
-			
-			if (y_volt < 125 && select_menu < 5){	//5 lines
-				select_menu++;
-			}
-			if (y_volt > 135 && select_menu > 1){
-				select_menu--;
-			}
-			if(x_volt < 60){
-				sub_menu = 1;
-				break;
-			}
-			if(x_volt > 150){
-				if (select_menu == 1){	//German
-					team_chosen = 0;
-				}
-				if (select_menu == 2){	//allied
-					team_chosen = 1;
-				}
-				if (select_menu == 3){	//soviet
-					team_chosen = 2;
-				}
-				if (select_menu == 4){	//sweden
-					team_chosen = 3;
-				}
-				sub_menu = 4;	//print chosen team
-				break;
-			}
-			
+		
+		// TEAM MENU
+		while(sub_menu == 2){	
 			clear_oled();
 			oled_set_column(0);
 			oled_set_page(0);
@@ -440,16 +169,25 @@ void new_oled_menu()
 				oled_set_page(k+1);
 			}
 			_delay_ms(delay);
-		}
-		
-
-		while (sub_menu == 3){ 	//Gamemodes menu
-
+			
+			//READ MULTIFUNCTION CARD VALUES
 			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
 			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+			DDRB &= ~(1 << PB2);
+			bool val_joystick;
+			bool joystick_pressed = val_joystick;
+			val_joystick = (PINB & (1 << PB2));
+						
+						
+			if (joystick_pressed == 0){
+				joystick_pressed = 1;
+			}
+			else{
+				joystick_pressed = 0;
+			}
 
 			
-			if (y_volt < 125 && select_menu < 3){
+			if (y_volt < 125 && select_menu < 4){	//5 lines
 				select_menu++;
 			}
 			if (y_volt > 135 && select_menu > 1){
@@ -459,27 +197,33 @@ void new_oled_menu()
 				sub_menu = 1;
 				break;
 			}
-			if(x_volt > 135){
-				if (select_menu == 1){	//normal
-					lives =  10;
-					sub_menu = 6;
+			if(joystick_pressed==1){
+				if (select_menu == 1){
+					team_chosen = 0;
 				}
-				if (select_menu == 2){	//hard-mode
-					lives = 3;
-					sub_menu =6;
+				if (select_menu == 2){	
+					team_chosen = 1;
 				}
-				if (select_menu == 3){	//dark souls
-					lives = 1;
-					sub_menu =6;
+				if (select_menu == 3){	
+					team_chosen = 2;
 				}
-				
+				if (select_menu == 4){	
+					team_chosen = 3;
+				}
+				sub_menu = 4;	// Go to print chosen team
 				break;
 			}
+			
+
+		}
+		
+		//GAMEMODES MENU
+		while (sub_menu == 3){ 	
 			
 			clear_oled();
 			oled_set_column(0);
 			oled_set_page(0);
-			
+						
 			for (k = 0; k < 4; k++){
 				for (j = 0; j < 13; j++){
 					for (i = 0; i < 5; i++)	{
@@ -495,11 +239,56 @@ void new_oled_menu()
 				}
 				oled_set_page(k+1);
 			}
+
 			_delay_ms(delay);
+			
+			//READ MULTIFUNCTION CARD VALUES
+			DDRB &= ~(1 << PB2);
+			bool val_joystick;
+			bool joystick_pressed = val_joystick;
+			val_joystick = (PINB & (1 << PB2));
+			
+			if (joystick_pressed == 0){
+				joystick_pressed = 1;
+			}
+			else{
+				joystick_pressed = 0;
+			}
+			unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
+			unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
+
+			
+			if (y_volt < 125 && select_menu < 3){
+				select_menu++;
+			}
+			if (y_volt > 135 && select_menu > 1){
+				select_menu--;
+			}
+			if(x_volt < 60){
+				sub_menu = 1;			//Go to main manu
+				break;
+			}
+			if(joystick_pressed == 1){
+				if (select_menu == 1){	
+					lives =  5;
+					sub_menu = 6;
+				}
+				if (select_menu == 2){	
+					lives = 3;
+					sub_menu =6;
+				}
+				if (select_menu == 3){
+					lives = 1;
+					sub_menu =6;
+				}
+				break;		// Go to gaming
+			}
+			
+			_delay_ms(delay);			
 		}
 		
-		
-		while (sub_menu == 4){	//print team chosen
+		//PRINT TEAM CHOSEN
+		while (sub_menu == 4){	
 
 			clear_oled();
 			oled_set_column(0);
@@ -509,17 +298,17 @@ void new_oled_menu()
 				for (j = 0; j < 20; j++){
 					for (i = 0; i < 5; i++){
 						oled_set_column(i+(j*5));
-						write_d(pgm_read_byte(&font5[team_print[team_chosen][j] - ' '][i]));
-						
+						write_d(pgm_read_byte(&font5[team_print[team_chosen][j] - ' '][i]));	
 					}
 				}
 				oled_set_page(k+1);
 			}
-			sub_menu = 1;
+			sub_menu = 1;			// go to main menu
 			_delay_ms(delay*5);
 		}
 		
-		while(sub_menu==5){    // game over
+		// PRINT GAME OVER
+		while(sub_menu==5){   
 			clear_oled();
 			oled_set_column(0);
 			oled_set_page(3);
@@ -531,14 +320,22 @@ void new_oled_menu()
 				}
 			}
 			_delay_ms(delay*10);
-			sub_menu = 1;
+			sub_menu = 7;			//Go to score
 		}
-		
-		while(sub_menu==6){		//game on
+		//GAMING
+		while(sub_menu==6){		
 			
-			// --starte en timer kanksje--
+			timer = 0;
 			lives_tot = lives;
 	
+			clear_oled();
+			oled_set_page(0);
+			for (j = 0; j < 17; j++){
+				for (i = 0; i < 5; i++){
+					oled_set_column(i+(j*5));
+					write_d(pgm_read_byte(&font5[gameOn[0][j] - ' '][i]));		
+				}
+			}
 			while(lives>0){
 				
 				msg *message = (msg*)malloc(sizeof(msg));
@@ -548,20 +345,8 @@ void new_oled_menu()
 				
 				free(message);
 				
-				clear_oled();
+				clear_page(4);
 				oled_set_column(0);
-				oled_set_page(0);
-				
-				for (j = 0; j < 17; j++){
-					for (i = 0; i < 5; i++){
-						oled_set_column(i+(j*5));
-						write_d(pgm_read_byte(&font5[gameOn[0][j] - ' '][i]));
-						
-					}
-				}
-
-			
-			
 				oled_set_page(4);
 					
 				for(k = 0; k < lives_tot; k++){
@@ -576,36 +361,29 @@ void new_oled_menu()
 						}
 					}
 				}
+				_delay_ms(1);			
 				
-				_delay_ms(1);				//<---bør være lav
-	
 				DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
 				
+				//READ MULTIFUNCTION CARD VALUES
 				unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
 				unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
 				unsigned int SR_volt = read_adc(ADC_CHANNEL_SLIDER_R);
 				unsigned int SL_volt = read_adc(ADC_CHANNEL_SLIDER_L);
-
-
-				
-				bool val_joystick;  //testing if joystick pushbutton returns its value
+				bool val_joystick;  
 				bool button_left = (PINB & (1 << PB0));
 				bool button_right = (PINB & (1 << PB1));
-				
-				
-				bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
+				bool joystick_pressed = val_joystick;		
 				val_joystick = (PINB & (1 << PB2));
 				
-				if (joystick_pressed == 0)
-				{
+				if (joystick_pressed == 0){
 					joystick_pressed = 1;
 				}
-				else
-				{
+				else{
 					joystick_pressed = 0;
 				}
 				
-
+				//CREATE MESSAGE
 				msg can_message;
 				
 				can_message.id = 0x70;
@@ -621,166 +399,69 @@ void new_oled_menu()
 
 
 				
-				
+				//SEND MESSAGE
 				CAN_message_send(can_message);
+				timer = timer + 1;
 
 			}
-			sub_menu = 5;  // game over
+			sub_menu = 5;  //Go to game over
+			
+			// SET NOE 2 TO WAITING
 			msg can_message;
 				
 			can_message.id = 0x70;
-			can_message.length = 7;				// --setting node 2 to w8ting
+			can_message.length = 7;				
 			can_message.data[2] = 10;
 				
 			CAN_message_send(can_message);
 		}
+		//DISPLAY SCORE
+		while(sub_menu == 7) 
+		{
+			int val;
+			int count = 0;
+			double n = (double)timer;
+			
+			while(n >= 1){
+				n /= 10;
+				++count;
+			}
+
+			char arr[count];
+			
+			//SPILTING THE DIGITS
+			for(i = 0; i < count; i++){
+				val = timer % 10;
+				arr[i] = val;
+				timer = timer - val;
+				timer = timer / 10;
+			}
+			
+			clear_oled();
+			oled_set_column(0);
+			oled_set_page(0);
+			for (k = 0; k < 9; k++){
+				for (i = 0; i < 5; i++)	{
+					oled_set_column(30+i+(k*5));
+					write_d(pgm_read_byte(&font5[score[0][k] - ' '][i]));
+				}
+			}
+
+			oled_set_page(2);
+			for (k = count; k > 0; k--){
+				for (i = 0; i < 5; i++)	{
+					oled_set_column(30+i+((count-k)*5));
+					write_d(pgm_read_byte(&font5[numbers[arr[k-1]][0] - ' '][i]));
+					_delay_ms(50);
+				}
+			}		
+			_delay_ms(delay*20);
+			sub_menu = 1;			//Go to main manu
+		}
+
 	}
 
 }
-
-/*
-void game_running_print(char lives,int team_chosen,int lives_tot){
-
-	int i,j,k;
-	
-	const char team_gaming[4][20] = {  // menu 2, 15 plasser
-		" Team: Germany ",
-		" Team: Allied  ",
-		" Team: Soviet  ",
-		" Team: Sweden  ",
-	};
-	const char hearts[2][20] = {  // hearts
-		" ", //empty heart -- space ---
-		"!", //full heart  --- ! ---
-	};
-	const char gameOn[1][20] = {  // menu  -- game on--, 17 plasser
-		"-- G A M I N G --",
-	};
-	const char lives_rem[1][22] = {  // DISPLAY HEARTS, 16 plasser
-			"Lives remaining:",
-	};
-
-	
-	clear_oled();
-	oled_set_column(0);
-	oled_set_page(0);
-	for (j = 0; j < 17; j++){
-		for (i = 0; i < 5; i++){
-			oled_set_column(i+(j*5));
-			write_d(pgm_read_byte(&font5[gameOn[0][j] - ' '][i]));
-			
-		}
-	}
-	oled_set_page(1);
-	
-	for (j = 0; j < 15; j++){
-		for (i = 0; i < 5; i++){
-			oled_set_column(i+(j*5));
-			write_d(pgm_read_byte(&font5[team_gaming[team_chosen][j] - ' '][i]));
-			
-		}
-	}
-	oled_set_page(3);
-	for (j = 0; j < 16; j++){
-		for (i = 0; i < 5; i++){
-			oled_set_column(i+(j*5));
-			write_d(pgm_read_byte(&font5[lives_rem[0][j] - ' '][i]));
-			
-		}
-	}
-	oled_set_page(4);
-	
-	for(k = 0; k < lives; k++){
-		for (i = 0; i < 11; i++){
-			if(lives_tot <= k ){		//if hearts now is less than hearts startet with, print empty heart.
-				oled_set_column(i+(k*11));
-				write_d(pgm_read_byte(&heart[hearts[0][0] - ' '][i]));
-			}
-			else{
-				oled_set_column(i+(k*11));
-				write_d(pgm_read_byte(&heart[hearts[1][0] - ' '][i]));
-			}
-		}
-	}
-	
-	
-	
-}*/ // FUNKER
-
-/*
-void test_CAN_joystick()
-{
-	DDRB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2));
-	while (1)
-	{
-		unsigned int x_volt = read_adc(ADC_CHANNEL_JOY_X);
-		unsigned int y_volt = read_adc(ADC_CHANNEL_JOY_Y);
-		unsigned int SR_volt = read_adc(ADC_CHANNEL_SLIDER_R);
-		unsigned int SL_volt = read_adc(ADC_CHANNEL_SLIDER_L);
-
-
-		
-		bool val_joystick;  //testing if joystick pushbutton returns its value
-		bool button_left = (PINB & (1 << PB0));
-		bool button_right = (PINB & (1 << PB1));
-		
-		
-		bool joystick_pressed = val_joystick;		//Ettersom det i utgangspunktet returneres '0' når Joysticken trykkes, implementerer vi den simple koden nedenfor, slik at vi får '1' når Joysticken trykkes på.
-		val_joystick = (PINB & (1 << PB2));
-			
-		if (joystick_pressed == 0)
-		{
-			joystick_pressed = 1;
-		}
-		else
-		{
-			joystick_pressed = 0;
-		}
-			
-			
-				printf("Joystick: %d\n", joystick_pressed);
-		printf("X: %d Y: %d B: %d\n", x_volt, y_volt,joystick_pressed);
-		printf("Left button: %d Right button: %d\n", button_left, button_right);		
-		msg can_message;
-		
-		can_message.id = 0x70;	
-		can_message.length = 7;
-		
-		can_message.data[0] = x_volt;
-		can_message.data[1] = y_volt;
-		can_message.data[2] = joystick_pressed;	
-		can_message.data[3] = button_left;
-		can_message.data[4] = button_right;
-		can_message.data[5] = SR_volt;
-
-		
-		
-		CAN_message_send(can_message);
-		printf("CANINTF: %x\n",MCP_read(MCP_CANINTF));
-		printf("Error: %x\n",MCP_read(MCP_EFLG));		if (MCP_read(MCP_EFLG))
-		{
-			MCP_reset();
-			printf("Resetting..\n");
-		}		
-
-		//printf("y_volt: %d \n",y_volt);
-		printf("joy: %d \n",joystick_pressed);
-		//printf("bl: %d \n",button_left);
-		//printf("br: %d \n",button_right);
-		//printf("sl: %d \n",SL_volt);
-		printf("sr: %d \n\n",SR_volt);
-		
-		msg *message = (msg*)malloc(sizeof(msg));
-		
-		CAN_data_receive(message);
-		printf("LIFE: %d\n", message->data[7]);
-				
-		free(message);
-		
-	}
-}
-*/
-
 
 
 
@@ -791,34 +472,11 @@ void main(void)
 	ram_init();
 	MCP_init();
 	CAN_init();
-	
-	
-		
-		
-		
-	//OLED
-	//oled_init();
+	oled_init();
 	init_program();
-	new_oled_menu();
 	
-
-	//oled_menu();
-
+	//GAING 
+	game();
 	
-	
-	//test_CAN_joystick();
-
-	
-	//test_buttons();
-	//test_CAN();
-	//SRAM_test();
-	//test_adc();
-	//test_buttons();
-	//test_joystick();
-	//print_to_oled();
-	//print_oled();
-
-	//menu();
-	//test_SPI();	
 }
 

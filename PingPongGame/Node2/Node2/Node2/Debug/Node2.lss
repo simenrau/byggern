@@ -17,15 +17,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   6 .debug_abbrev 00000de4  00000000  00000000  0000386c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   000014c7  00000000  00000000  00004650  2**0
+  7 .debug_line   000014c8  00000000  00000000  00004650  2**0
                   CONTENTS, READONLY, DEBUGGING
   8 .debug_frame  00000598  00000000  00000000  00005b18  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000005d4  00000000  00000000  000060b0  2**0
+  9 .debug_str    000005e7  00000000  00000000  000060b0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000fc7  00000000  00000000  00006684  2**0
+ 10 .debug_loc    00000fc7  00000000  00000000  00006697  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000208  00000000  00000000  0000764b  2**0
+ 11 .debug_ranges 00000208  00000000  00000000  0000765e  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -923,8 +923,8 @@ void motor_velocity(int16_t velocity)
      4b0:	80 e0       	ldi	r24, 0x00	; 0
      4b2:	1c c0       	rjmp	.+56     	; 0x4ec <ball_count+0x6c>
      4b4:	2f ef       	ldi	r18, 0xFF	; 255
-     4b6:	8b e7       	ldi	r24, 0x7B	; 123
-     4b8:	92 e9       	ldi	r25, 0x92	; 146
+     4b6:	8d e3       	ldi	r24, 0x3D	; 61
+     4b8:	99 e4       	ldi	r25, 0x49	; 73
      4ba:	21 50       	subi	r18, 0x01	; 1
      4bc:	80 40       	sbci	r24, 0x00	; 0
      4be:	90 40       	sbci	r25, 0x00	; 0

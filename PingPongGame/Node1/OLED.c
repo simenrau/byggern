@@ -85,6 +85,14 @@ void OLED_print_arrow(uint8_t row, uint8_t col)
 	write_d(0b00111100);
 	write_d(0b00011000);
 }
-
-
+void clear_page(int page)
+{
+	oled_set_page(page);
+			
+		for(int i = 0; i < 128; i++)
+		{
+			oled_set_column(i);
+			write_d(0x00);
+		}
+}
 

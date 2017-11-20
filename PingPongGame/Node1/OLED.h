@@ -11,5 +11,5 @@ void oled_set_page();
 void oled_set_column();
 void clear_oled();
 void OLED_print_arrow();
-
+void clear_page(int page);
 #endif

@@ -1,11 +1,5 @@
-/*
- * heart.h
- *
- * Library of heart
- */
 #ifndef hearts_H_
 #define hearts_H_
-
 
 #include "define.h"
 #include <avr/pgmspace.h>

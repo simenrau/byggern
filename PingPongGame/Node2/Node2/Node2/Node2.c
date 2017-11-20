@@ -114,7 +114,7 @@ char ball_count(char life)
 			return 0;
 		}
 		
-		_delay_ms(3000);
+		_delay_ms(1500);
 		while(ir_value < 10)
 		{
 			ir_value = ADC_read();
@@ -248,6 +248,9 @@ void game()
 			
 			
 			lives = ball_count(lives);
+			
+			
+			
 			printf("lives: %d",lives);
 			msg can_message;
 					

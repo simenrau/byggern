@@ -16,7 +16,7 @@
 #define MYUBRR FOSC/16/BAUD-1
 
 
-//Stuff til oled
+// STUFF FOR OLED
 #define OLED_COMMAND_MEMORY_START 0x1000
 #define OLED_DATA_MEMORY_START    0x1200
 #define ADC_MEMORY_START          0x1400

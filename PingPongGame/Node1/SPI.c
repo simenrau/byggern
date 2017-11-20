@@ -24,10 +24,8 @@ void SPI_MasterTransmit(char cdata)
 
 void SPI_SlaveInit(void)
 {
-	/* Set MISO output, all others input */
 	DDRB = (1 << MISO);
 	
-	/* Enable SPI */
 	SPCR = (1<<SPE);
 }
 
