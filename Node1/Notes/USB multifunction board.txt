@@ -1,0 +1,7 @@
+Left button mid port B
+ 
+Left slider mid back port B
+
+Right button back left corner port D
+
+Right slider left corner port D
